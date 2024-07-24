@@ -1,0 +1,24 @@
+fileignoreconfig:
+- filename: Tests/OpenId4VPTests/OpenId4VPTests.swift
+  checksum: 3f5fcc6a9d358153d0dc7c9b85f7dae3c69411d89c77bdd4be81f1870db8a45a
+- filename: .swiftpm/xcode/xcuserdata/adityankannan.xcuserdatad/xcschemes/xcschememanagement.plist
+  checksum: 29be8e94ed3eccead1f1240f2fe64528a13dffeafc6060b8ce73a47ce742797a
+- filename: Sources/OpenId4VP/AuthorizationRequest/PresentationDefinition/FormatTypes/Ldp.swift
+  checksum: 2751dac0915506f244f64434d3989bbda590b048f17d86faa83d384b9af8572b
+- filename: Sources/OpenId4VP/AuthorizationRequest/PresentationDefinition/InputDescriptor.swift
+  checksum: 830dcba61a7ba50aa7070d409e8c3dd90dda272e05068369f444f80a5a574c50
+- filename: Sources/OpenId4VP/AuthorizationRequest/PresentationDefinition/FormatTypes/Jwt.swift
+  checksum: 46940b17c81b3889327fcdfe04b9b8e81ce94c2cc5c6eb7af468dd9d4c37aa4d
+- filename: Sources/OpenId4VP/AuthorizationRequest/PresentationDefinition/Format.swift
+  checksum: a096627758914aa4fa1183eb32bc4b5b5770f929ab4cfae2f0e73e434f108cbd
+- filename: Sources/OpenId4VP/AuthorizationRequest/PresentationDefinition/Constraints.swift
+  checksum: d50ecf0c4c4c0f23daf95ca62871d027f39a66b5c3e986126eb6542e25e66fce
+- filename: Sources/OpenId4VP/AuthorizationRequest/PresentationDefinition/Filter.swift
+  checksum: 65424017356ef890ee32130b17510e192537ff3246cf9a2a9fa5d09a861d93ef
+- filename: Sources/OpenId4VP/AuthorizationRequest/PresentationDefinition/Field.swift
+  checksum: 5509ce08abc05e514cd295e4d8ada8a2953c7da7ad8e3f0ee11330203f979a8f
+- filename: Sources/OpenId4VP/AuthorizationRequest/AuthorizationRequest.swift
+  checksum: 63a6dbe3758dc733386d5103b156239ea708b7c41f7baad1f826f9f33efe247e
+- filename: Sources/OpenId4VP/AuthorizationRequest/PresentationDefinition/PresentationDefinition.swift
+  checksum: 2f54223f8786ec0606ba3f8d97fec6cf8edfc1f3e731e4b0d8ef3493dbf5622d
+version: ""
