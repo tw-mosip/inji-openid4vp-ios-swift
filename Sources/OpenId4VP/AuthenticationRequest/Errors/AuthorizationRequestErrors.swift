@@ -5,7 +5,7 @@ enum AuthorizationRequestErrors: Error {
     case clientVerificationFailed
     case jsonDecodingFailed
     case unexpectedFormat
-    case presentationDefinitionValidationFailed
+    case invalidPresentationDefinition
 }
 
 enum AuthorizationRequestParseError: Error {

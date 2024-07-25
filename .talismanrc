@@ -1,6 +1,6 @@
 fileignoreconfig:
 - filename: Tests/OpenId4VPTests/OpenId4VPTests.swift
-  checksum: 3f5fcc6a9d358153d0dc7c9b85f7dae3c69411d89c77bdd4be81f1870db8a45a
+  checksum: c097729e78bf8d571ab5144743d040d0ed7a8b72e87a3288b284d89f39518fe5
 - filename: .swiftpm/xcode/xcuserdata/adityankannan.xcuserdatad/xcschemes/xcschememanagement.plist
   checksum: 29be8e94ed3eccead1f1240f2fe64528a13dffeafc6060b8ce73a47ce742797a
 - filename: Sources/OpenId4VP/AuthorizationRequest/PresentationDefinition/FormatTypes/Ldp.swift
@@ -21,4 +21,22 @@ fileignoreconfig:
   checksum: 63a6dbe3758dc733386d5103b156239ea708b7c41f7baad1f826f9f33efe247e
 - filename: Sources/OpenId4VP/AuthorizationRequest/PresentationDefinition/PresentationDefinition.swift
   checksum: 2f54223f8786ec0606ba3f8d97fec6cf8edfc1f3e731e4b0d8ef3493dbf5622d
+- filename: Tests/OpenId4VPTests/OpenId4VPTests.swift
+  checksum: c097729e78bf8d571ab5144743d040d0ed7a8b72e87a3288b284d89f39518fe5
+- filename: Sources/OpenId4VP/AuthenticationRequest/PresentationDefinition/InputDescriptor.swift
+  checksum: 4512cd9a73441a714e0c9a7f69738a7ab0df3da01a7f0cad51165558408e3028
+- filename: Sources/OpenId4VP/AuthenticationRequest/PresentationDefinition/FormatTypes/Ldp.swift
+  checksum: 0ef0d055dac9c64a520f460c26a3ee18375b739957a216503d865f0e48598224
+- filename: Sources/OpenId4VP/AuthenticationRequest/PresentationDefinition/PresentationDefinition.swift
+  checksum: 058d9a64e22c5a5de878e8677dd3cace2e24dfeab7be568e368aa6677415ca6f
+- filename: Sources/OpenId4VP/AuthenticationRequest/Utils/AuthenticationRequestUtils.swift
+  checksum: 7e0e38588f0a056c0b53b228bc705ab2d1faaf64f8ad167905c8111ea7874fa3
+- filename: Sources/OpenId4VP/AuthenticationRequest/PresentationDefinition/Constraints.swift
+  checksum: abb0c9b54c8925d8acc9785644d29ba4e2661ecd29d4498dfc9691549fffd99b
+- filename: Sources/OpenId4VP/AuthenticationRequest/PresentationDefinition/Field.swift
+  checksum: 341bf7571062363de11625b1aaec8c5f20eb6692f31586c5981d487b0e3b8411
+- filename: Sources/OpenId4VP/AuthenticationRequest/PresentationDefinition/Format.swift
+  checksum: 02e7620709b28a665b8dfcc5588b70953b1cbf90ad6cb0a4c18984ef2b797556
+- filename: Sources/OpenId4VP/AuthenticationRequest/PresentationDefinition/Filter.swift
+  checksum: fa55f6bdd46271463a608fb98cc4f76cc4f7120aba3d5a3e8dce6c94b902e585
 version: ""

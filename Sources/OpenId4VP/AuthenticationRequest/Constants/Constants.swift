@@ -1,5 +1,3 @@
-import Foundation
-
 struct PresentationDefinitionParams {
     static let clientid = "client_id"
     static let presentationdefinition = "presentation_definition"
@@ -20,10 +18,12 @@ struct PresentationDefinitionParams {
     ]
 }
 
-struct PresentationDefinitionError {
-    static let PresentationDefinitionErrors = "presentationDefinitionErrors"
+struct LimitDisclosure {
+    static let required = "required"
+    static let preferred = "preferred"
 }
 
-struct VerifierParams {
-    static let redirect_uri = "redirect_uri"
+struct Path {
+    static let dollorAndDotPrefix = "$."
+    static let dollorAndSquareBracketPrefix = "$["
 }
