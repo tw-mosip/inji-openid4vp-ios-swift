@@ -20,4 +20,5 @@ enum VerifierVerificationError: Error {
     case invalidClientId
     case clientIdNotFound
     case missingRedirectUri
+    case failedToVerifyClientId
 }

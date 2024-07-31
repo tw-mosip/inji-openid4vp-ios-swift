@@ -1,6 +1,7 @@
 struct PresentationDefinitionParams {
     static let clientid = "client_id"
     static let presentationdefinition = "presentation_definition"
+    static let scope = "scope"
     static let responsetype = "response_type"
     static let responseMode = "response_mode"
     static let nonce = "nonce"
@@ -10,6 +11,7 @@ struct PresentationDefinitionParams {
     static let allKeys = [
         clientid,
         presentationdefinition,
+        scope,
         responsetype,
         responseMode,
         nonce,
@@ -26,4 +28,8 @@ struct LimitDisclosure {
 struct Path {
     static let dollorAndDotPrefix = "$."
     static let dollorAndSquareBracketPrefix = "$["
+}
+
+struct PresentationDefinitionId {
+    static let id = "presentation_definition_id"
 }
