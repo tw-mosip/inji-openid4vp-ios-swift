@@ -4,7 +4,8 @@ struct PresentationDefinitionValidator {
     
     static func validate(presentatioDefinition: String) throws -> PresentationDefinition {
         guard let jsonData = presentatioDefinition.data(using: .utf8) else {
-            throw AuthorizationRequestErrors.jsonDecodingFailed
+            Logger.error("Decoding of presentationDefinition failed.")
+            throw AuthenticationResponseErrors.jsonDecodingFailed
         }
         
         let decoder = JSONDecoder()
@@ -13,7 +14,8 @@ struct PresentationDefinitionValidator {
             
             
         } catch {
-            throw AuthorizationRequestErrors.invalidPresentationDefinition
+            Logger.error("Presentation definition in AuthorizationRequest is invalid.")
+            throw AuthenticationResponseErrors.invalidPresentationDefinition
         }
     }
 }

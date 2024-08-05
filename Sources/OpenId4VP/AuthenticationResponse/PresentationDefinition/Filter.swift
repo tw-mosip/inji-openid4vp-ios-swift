@@ -13,11 +13,13 @@ struct Filter: Codable {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         
         guard let type = try container.decodeIfPresent(String.self, forKey: .type) else {
-            throw AuthorizationRequestErrors.invalidPresentationDefinition
+            Logger.error("Filter : type should be present.")
+            throw AuthenticationResponseErrors.invalidPresentationDefinition
         }
         
         guard let pattern = try container.decodeIfPresent(String.self, forKey: .pattern) else {
-            throw AuthorizationRequestErrors.invalidPresentationDefinition
+            Logger.error("Filter : pattern should be present.")
+            throw AuthenticationResponseErrors.invalidPresentationDefinition
         }
         
         self.type = type
@@ -28,7 +30,8 @@ struct Filter: Codable {
     
     func validate() throws {
         guard !type.isEmpty || !pattern.isEmpty else {
-            throw AuthorizationRequestErrors.invalidPresentationDefinition
+            Logger.error("Filter : type or pattern is empty.")
+            throw AuthenticationResponseErrors.invalidPresentationDefinition
         }
     }
 }

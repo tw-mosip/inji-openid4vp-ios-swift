@@ -1,13 +1,9 @@
 import Foundation
 
-public class AuthenticationResponse {
+public struct AuthenticationResponse {
     let response: [String: String]
     
-    init(response: [String: String]) {
-        self.response = response
-    }
-    
-    static func getAuthenticationResponse(_ authorizationRequest: AuthorizationRequest,_ trustedVerifierJSON: [[Verifier]], openId4VpInstance: OpenId4VP) throws -> AuthenticationResponse{
+    static func getAuthenticationResponse(_ authorizationRequest: AuthorizationRequest,_ trustedVerifierJSON: [[Verifier]], openId4VpInstance: OpenId4VP) throws -> AuthenticationResponse {
         
         try verifyClientId(verifierList: trustedVerifierJSON, clientId: authorizationRequest.clientId)
         
@@ -20,7 +16,7 @@ public class AuthenticationResponse {
             
             openId4VpInstance.presentationDefinitionId = presentationDefinition.id
             
-        } else if let scope = authorizationRequest.scope {
+        } else if authorizationRequest.scope != nil {
             responseDict[PresentationDefinitionParams.scope] = authorizationRequest.scope
         }
         return AuthenticationResponse(response: responseDict)
@@ -28,6 +24,7 @@ public class AuthenticationResponse {
     
     static func verifyClientId(verifierList: [[Verifier]], clientId: String) throws {
         guard let decodedClientId = clientId.removingPercentEncoding else {
+            Logger.error("Client id is invalid : \(clientId)")
             throw VerifierVerificationError.invalidClientId
         }
         
@@ -35,12 +32,14 @@ public class AuthenticationResponse {
             for verifier in verifiers {
                 if verifier.clientId == decodedClientId {
                     guard !verifier.redirectUri.isEmpty else {
-                        throw VerifierVerificationError.missingRedirectUri
+                        Logger.error("Redirect uri in verifier :\(verifier) is empty")
+                        throw VerifierVerificationError.redirectUriIsEmpty
                     }
                     return
                 }
             }
         }
+        Logger.error("Client id not found in \(verifierList)")
         throw VerifierVerificationError.clientIdNotFound
     }
 }

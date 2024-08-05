@@ -19,20 +19,23 @@ struct AuthorizationRequest {
     
     static func getAuthorizationRequest(encodedAuthorizationRequest: String, openId4VpInstance: OpenId4VP) throws {
         guard let decodedRequest = decodeAuthorizationRequest(encodedAuthorizationRequest) else {
+            Logger.error("Decoding of the AuthorizationRequest failed.")
             throw AuthorizationRequestParseError.decodingFailed
         }
         
-        try parseAuthorizationRequest(decodedAuthorizationRequest: decodedRequest,openId4VpInstance: openId4VpInstance)
+        try AuthorizationRequest.parseAuthorizationRequest(decodedAuthorizationRequest: decodedRequest,openId4VpInstance: openId4VpInstance)
         
     }
     
     static func parseAuthorizationRequest(decodedAuthorizationRequest: String, openId4VpInstance: OpenId4VP) throws {
         
         guard let encodedRequestUrl = urlEncodedRequest(decodedAuthorizationRequest) else {
+            Logger.error("URLEncoding of the AuthorizationRequest failed while parsing.")
             throw AuthorizationRequestParseError.urlCreationFailed
         }
         
         guard let queryItems = getQueryItems(encodedRequestUrl) else {
+            Logger.error("Query items retrieval from AuthorizationRequest failed.")
             throw AuthorizationRequestParseError.queryItemsRetrievalFailed
         }
         
@@ -40,6 +43,7 @@ struct AuthorizationRequest {
         for key in PresentationDefinitionParams.allKeys {
             if let queryItem = queryItems.first(where: { $0.name == key }) {
                 guard let value = queryItem.value, !value.isEmpty else {
+                    Logger.error("AuthorizationRequest parameter value should not be empty : \(queryItem)")
                     throw AuthorizationRequestParseError.someParametersAreEmpty
                 }
                 extractedValues[key] = value
@@ -52,6 +56,7 @@ struct AuthorizationRequest {
               let nonce = extractedValues[PresentationDefinitionParams.nonce],
               let state = extractedValues[PresentationDefinitionParams.state],
               let responseUri = extractedValues[PresentationDefinitionParams.responseUri] else {
+            Logger.error("AuthorizationRequest parameters should not be null.")
             throw AuthorizationRequestParseError.someParametersAreEmpty
         }
         
@@ -59,6 +64,7 @@ struct AuthorizationRequest {
         let scope = extractedValues[PresentationDefinitionParams.scope]
         
         if (presentationDefinition == nil && scope == nil || presentationDefinition != nil && scope != nil) {
+            Logger.error("AuthorizationRequest parameters are invalid.")
             throw AuthorizationRequestParseError.invalidParameters
         }
         

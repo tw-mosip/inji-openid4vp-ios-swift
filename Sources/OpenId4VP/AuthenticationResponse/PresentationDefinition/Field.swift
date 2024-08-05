@@ -21,7 +21,8 @@ struct Field: Codable {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         
         guard let path = try container.decodeIfPresent([String].self, forKey: .path) else {
-            throw AuthorizationRequestErrors.invalidPresentationDefinition
+            Logger.error("Field : path should be present.")
+            throw AuthenticationResponseErrors.invalidPresentationDefinition
         }
         
         self.path = path
@@ -36,12 +37,14 @@ struct Field: Codable {
     
     func validate() throws {
         guard !path.isEmpty else {
-            throw AuthorizationRequestErrors.invalidPresentationDefinition
+            Logger.error("Field : path should not be empty.")
+            throw AuthenticationResponseErrors.invalidPresentationDefinition
         }
         
         for p in path {
             if !(p.starts(with: Path.dollorAndDotPrefix) || p.starts(with: Path.dollorAndSquareBracketPrefix)) {
-                throw AuthorizationRequestErrors.invalidPresentationDefinition
+                Logger.error("Field : path is invalid.")
+                throw AuthenticationResponseErrors.invalidPresentationDefinition
             }
         }
         

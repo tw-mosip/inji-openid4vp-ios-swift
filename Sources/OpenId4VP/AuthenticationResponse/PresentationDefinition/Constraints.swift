@@ -13,7 +13,8 @@ struct Constraints: Codable {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         
         guard let fields = try container.decodeIfPresent([Field].self, forKey: .fields) else {
-            throw AuthorizationRequestErrors.invalidPresentationDefinition
+            Logger.error("Constraints : Fields should be present.")
+            throw AuthenticationResponseErrors.invalidPresentationDefinition
         }
         
         self.fields = fields
@@ -24,7 +25,8 @@ struct Constraints: Codable {
     
     func validate() throws {
         guard let fields = fields, !fields.isEmpty else {
-            throw AuthorizationRequestErrors.invalidPresentationDefinition
+            Logger.error("Constraints : Fields should not be empty.")
+            throw AuthenticationResponseErrors.invalidPresentationDefinition
         }
         
         for field in fields {
@@ -32,7 +34,8 @@ struct Constraints: Codable {
         }
         
         if let limitDisclosure = limitDisclosure, (limitDisclosure != LimitDisclosure.required && limitDisclosure != LimitDisclosure.preferred) {
-            throw AuthorizationRequestErrors.invalidPresentationDefinition
+            Logger.error("Constraints : Limit disclosure is not valid.")
+            throw AuthenticationResponseErrors.invalidPresentationDefinition
         }
     }
 }

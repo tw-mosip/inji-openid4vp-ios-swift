@@ -5,51 +5,48 @@ struct PresentationDefinition: Decodable {
     var name: String?
     var purpose: String?
     var input_descriptors: [InputDescriptor]
-    var format: Format?
     
     enum CodingKeys: String, CodingKey {
         case id
         case name
         case purpose
         case input_descriptors
-        case format
     }
     
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         
         guard let id = try container.decodeIfPresent(String.self, forKey: .id) else {
-            throw AuthorizationRequestErrors.invalidPresentationDefinition
+            Logger.error("PresentationDefinition : Id should be present.")
+            throw AuthenticationResponseErrors.invalidPresentationDefinition
         }
         
         guard let inputDescriptors = try container.decodeIfPresent([InputDescriptor].self, forKey: .input_descriptors) else {
-            throw AuthorizationRequestErrors.invalidPresentationDefinition
+            Logger.error("PresentationDefinition : Input Descriptor should be present.")
+            throw AuthenticationResponseErrors.invalidPresentationDefinition
         }
         
         self.id = id
         self.input_descriptors = inputDescriptors
         self.name = try container.decodeIfPresent(String.self, forKey: .name)
         self.purpose = try container.decodeIfPresent(String.self, forKey: .purpose)
-        self.format = try container.decodeIfPresent(Format.self, forKey: .format)
         
         try validate()
     }
     
     func validate() throws {
         guard !id.isEmpty else {
-            throw AuthorizationRequestErrors.invalidPresentationDefinition
+            Logger.error("PresentationDefinition : Id should not be empty.")
+            throw AuthenticationResponseErrors.invalidPresentationDefinition
         }
         
         guard !input_descriptors.isEmpty else {
-            throw AuthorizationRequestErrors.invalidPresentationDefinition
+            Logger.error("PresentationDefinition : Input descriptor should not be empty.")
+            throw AuthenticationResponseErrors.invalidPresentationDefinition
         }
         
         for descriptor in input_descriptors {
             try descriptor.validate()
-        }
-        
-        if let format = format {
-            try format.validate()
         }
     }
 }

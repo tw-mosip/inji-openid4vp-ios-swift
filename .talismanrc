@@ -17,8 +17,6 @@ fileignoreconfig:
   checksum: 65424017356ef890ee32130b17510e192537ff3246cf9a2a9fa5d09a861d93ef
 - filename: Sources/OpenId4VP/AuthorizationRequest/PresentationDefinition/Field.swift
   checksum: 5509ce08abc05e514cd295e4d8ada8a2953c7da7ad8e3f0ee11330203f979a8f
-- filename: Sources/OpenId4VP/AuthorizationRequest/AuthorizationRequest.swift
-  checksum: 63a6dbe3758dc733386d5103b156239ea708b7c41f7baad1f826f9f33efe247e
 - filename: Sources/OpenId4VP/AuthorizationRequest/PresentationDefinition/PresentationDefinition.swift
   checksum: 2f54223f8786ec0606ba3f8d97fec6cf8edfc1f3e731e4b0d8ef3493dbf5622d
 - filename: Tests/OpenId4VPTests/OpenId4VPTests.swift
@@ -39,4 +37,10 @@ fileignoreconfig:
   checksum: 02e7620709b28a665b8dfcc5588b70953b1cbf90ad6cb0a4c18984ef2b797556
 - filename: Sources/OpenId4VP/AuthenticationRequest/PresentationDefinition/Filter.swift
   checksum: fa55f6bdd46271463a608fb98cc4f76cc4f7120aba3d5a3e8dce6c94b902e585
+- filename: Sources/OpenId4VP/AuthorizationResponse/AuthorizationResponse.swift
+  checksum: 42c6bc581564e379b8b56cbba2197dd37efff8266b5491050c174c5cb0e0bb96
+- filename: Sources/OpenId4VP/AuthorizationResponse/PresentationSubmission/PresentationSubmission.swift
+  checksum: bbb2c45b2f6825fd1e5ee979d8c395acf5d479adb61e6e2ec26fc03116625d2d
+- filename: Sources/OpenId4VP/AuthorizationRequest/AuthorizationRequest.swift
+  checksum: 5e8889a35d4474e662e5382c5eabd70b407a88af19106189b1949dc46cb6916b
 version: ""
