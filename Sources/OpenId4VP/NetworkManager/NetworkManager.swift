@@ -1,13 +1,16 @@
 import Foundation
 
 public protocol NetworkManaging {
-    func sendHTTPPostRequest(requestBody: String, url: URL) async throws -> HTTPURLResponse?
+    func sendHTTPPostRequest(requestBody: String, url: URL) async throws -> String?
 }
 
 public struct NetworkManager: NetworkManaging {
     static var shared = NetworkManager()
     
-    public func sendHTTPPostRequest(requestBody: String, url: URL) async throws -> HTTPURLResponse? {
+    public func sendHTTPPostRequest(requestBody: String, url: URL) async throws -> String? {
+        
+        Logger.getLogTag(className: String(describing: self))
+        
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
@@ -18,18 +21,21 @@ public struct NetworkManager: NetworkManaging {
             
             guard let httpResponse = response as? HTTPURLResponse else {
                 Logger.error("Invalid response received.")
-                throw NetworkError.invalidResponse
+                throw NetworkRequestException.invalidResponse
             }
             
-            return httpResponse
+            if httpResponse.statusCode == 200 {
+                return "Success: Request completed successfully."
+            } else {
+                Logger.error("Request failed with status code: \(httpResponse.statusCode)")
+                throw NetworkRequestException.requestFailed("Request failed with status code: \(httpResponse.statusCode)" as! Error)
+            }
+        } catch let error as URLError where error.code == .timedOut {
+            Logger.error("Network request timed out.")
+            throw NetworkRequestException.networkRequestTimeout
         } catch {
-            Logger.error("Network request failed due to unknown error.")
-            throw NetworkError.requestFailed(error)
+            Logger.error("Network request failed due to unknown error: \(error.localizedDescription)")
+            throw NetworkRequestException.requestFailed(error)
         }
     }
-}
-
-enum NetworkError: Error {
-    case invalidResponse
-    case requestFailed(Error)
 }

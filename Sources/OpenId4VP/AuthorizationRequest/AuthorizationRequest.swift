@@ -18,9 +18,12 @@ struct AuthorizationRequest {
     public let response_uri: String
     
     static func getAuthorizationRequest(encodedAuthorizationRequest: String, openId4VpInstance: OpenId4VP) throws {
+        
+        Logger.getLogTag(className: String(describing: self))
+        
         guard let decodedRequest = decodeAuthorizationRequest(encodedAuthorizationRequest) else {
             Logger.error("Decoding of the AuthorizationRequest failed.")
-            throw AuthorizationRequestParseError.decodingFailed
+            throw AuthorizationRequestException.decodingFailed
         }
         
         try AuthorizationRequest.parseAuthorizationRequest(decodedAuthorizationRequest: decodedRequest,openId4VpInstance: openId4VpInstance)
@@ -31,53 +34,69 @@ struct AuthorizationRequest {
         
         guard let encodedRequestUrl = urlEncodedRequest(decodedAuthorizationRequest) else {
             Logger.error("URLEncoding of the AuthorizationRequest failed while parsing.")
-            throw AuthorizationRequestParseError.urlCreationFailed
+            throw AuthorizationRequestException.urlCreationFailed
         }
         
         guard let queryItems = getQueryItems(encodedRequestUrl) else {
             Logger.error("Query items retrieval from AuthorizationRequest failed.")
-            throw AuthorizationRequestParseError.queryItemsRetrievalFailed
+            throw AuthorizationRequestException.queryItemsRetrievalFailed
         }
         
+        let params = try extractQueryParams(from: queryItems)
+        
+        try validateParameters(params)
+        
+        openId4VpInstance.authorizationRequest = AuthorizationRequest(
+            clientId: params["client_id"]!,
+            presentation_definition: params["presentation_definition"],
+            scope: params["scope"],
+            response_type: params["response_type"]!,
+            response_mode: params["response_mode"]!,
+            nonce: params["nonce"]!,
+            state: params["state"]!,
+            response_uri: params["response_uri"]!
+        )
+        
+    }
+    
+    private static func extractQueryParams(from queryItems: [URLQueryItem]) throws -> [String: String] {
         var extractedValues: [String: String] = [:]
-        for key in PresentationDefinitionParams.allKeys {
-            if let queryItem = queryItems.first(where: { $0.name == key }) {
-                guard let value = queryItem.value, !value.isEmpty else {
-                    Logger.error("AuthorizationRequest parameter value should not be empty : \(queryItem)")
-                    throw AuthorizationRequestParseError.someParametersAreEmpty
-                }
-                extractedValues[key] = value
+        
+        for queryItem in queryItems {
+            guard let value = queryItem.value, !value.isEmpty else {
+                Logger.error("Query parameter value should not be empty: \(queryItem)")
+                throw AuthorizationRequestException.parameterValuesAreEmpty
+            }
+            extractedValues[queryItem.name] = value
+        }
+        
+        return extractedValues
+    }
+
+    
+    private static func validateParameters(_ values: [String: String]) throws {
+        let requiredKeys = [
+            "client_id",
+            "response_type",
+            "response_mode",
+            "nonce",
+            "state",
+            "response_uri"
+        ]
+        
+        for key in requiredKeys {
+            if values[key] == nil {
+                Logger.error("AuthorizationRequest parameters should not be null.")
+                throw AuthorizationRequestException.parameterValuesAreEmpty
             }
         }
         
-        guard let clientId = extractedValues[PresentationDefinitionParams.clientid],
-              let responseType = extractedValues[PresentationDefinitionParams.responsetype],
-              let responseMode = extractedValues[PresentationDefinitionParams.responseMode],
-              let nonce = extractedValues[PresentationDefinitionParams.nonce],
-              let state = extractedValues[PresentationDefinitionParams.state],
-              let responseUri = extractedValues[PresentationDefinitionParams.responseUri] else {
-            Logger.error("AuthorizationRequest parameters should not be null.")
-            throw AuthorizationRequestParseError.someParametersAreEmpty
-        }
+        let presentationDefinition = values["presentation_definition"]
+        let scope = values["scope"]
         
-        let presentationDefinition = extractedValues[PresentationDefinitionParams.presentationdefinition]
-        let scope = extractedValues[PresentationDefinitionParams.scope]
-        
-        if (presentationDefinition == nil && scope == nil || presentationDefinition != nil && scope != nil) {
+        if (presentationDefinition == nil && scope == nil) || (presentationDefinition != nil && scope != nil) {
             Logger.error("AuthorizationRequest parameters are invalid.")
-            throw AuthorizationRequestParseError.invalidParameters
+            throw AuthorizationRequestException.invalidInput(key: "PresentationDefinition or Scope")
         }
-        
-        openId4VpInstance.authorizationRequest = AuthorizationRequest(
-                clientId: clientId,
-                presentation_definition: presentationDefinition,
-                scope: scope,
-                response_type: responseType,
-                response_mode: responseMode,
-                nonce: nonce,
-                state: state,
-                response_uri: responseUri
-            )
-        
     }
 }

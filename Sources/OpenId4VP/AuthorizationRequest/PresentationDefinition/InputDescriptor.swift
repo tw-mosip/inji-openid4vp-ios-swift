@@ -18,12 +18,12 @@ struct InputDescriptor: Codable {
         
         guard let id = try container.decodeIfPresent(String.self, forKey: .id) else {
             Logger.error("Input Descriptor : Id should be present.")
-            throw AuthenticationResponseErrors.invalidPresentationDefinition
+            throw AuthorizationRequestException.missingInput(fieldName: "id")
         }
         
         guard let constraints = try container.decodeIfPresent(Constraints.self, forKey: .constraints) else {
             Logger.error("Input Descriptor : Constraints should be present.")
-            throw AuthenticationResponseErrors.invalidPresentationDefinition
+            throw AuthorizationRequestException.missingInput(fieldName: "constraints")
         }
         
         self.id = id
@@ -35,7 +35,7 @@ struct InputDescriptor: Codable {
     func validate() throws {
         guard !id.isEmpty else {
             Logger.error("Input Descriptor : Id should not be empty.")
-            throw AuthenticationResponseErrors.invalidPresentationDefinition
+            throw AuthorizationRequestException.invalidInput(key: "id")
         }
         
         try constraints.validate()

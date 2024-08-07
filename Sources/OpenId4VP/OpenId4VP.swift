@@ -11,23 +11,23 @@ public class OpenId4VP {
     
     public func authenticateVerifier(encodedAuthenticationRequest: String, trustedVerifierJSON: [[Verifier]]) throws -> AuthenticationResponse {
         
-        Logger.getLogTag(className: String(describing: type(of: self)), traceabilityId: traceabilityId)
+        Logger.setLogTag(className:String(describing: type(of: self)), traceabilityId: traceabilityId)
+        Logger.getLogTag(className: String(describing: type(of: self)))
         
         try AuthorizationRequest.getAuthorizationRequest(encodedAuthorizationRequest: encodedAuthenticationRequest, openId4VpInstance: self)
         
-       return try AuthenticationResponse.getAuthenticationResponse(authorizationRequest!, trustedVerifierJSON, openId4VpInstance: self)
+        return try AuthenticationResponse.getAuthenticationResponse(authorizationRequest!, trustedVerifierJSON, openId4VpInstance: self)
     }
     
     public func constructVerifiablePresentation(credentialsMap: [String: [String]]) throws ->  String? {
-
-        return try AuthorizationResponse.constructVpForSigning(credentialsMap)
         
+        return try AuthorizationResponse.constructVpForSigning(credentialsMap)
     }
     
-    public func sendVp(jws: String, signatureAlgoType: String, publicKey: String, domain: String, networkManager: NetworkManaging? = nil) async throws -> HTTPURLResponse? {
+    public func shareVerifiablePresentation(vpResponseMetadata: VPResponseMetadata, networkManager: NetworkManaging? = nil) async throws -> String? {
         
         let networkManager = networkManager ?? NetworkManager.shared
         
-        return try await AuthorizationResponse.shareVp(jws: jws,signatureAlgoType: signatureAlgoType,publicKey: publicKey,domain: domain, openId4VpInstance: self, networkManager: networkManager)
+        return try await AuthorizationResponse.shareVp(vpResponseMetadata: vpResponseMetadata, openId4VpInstance: self, networkManager: networkManager)
     }
 }

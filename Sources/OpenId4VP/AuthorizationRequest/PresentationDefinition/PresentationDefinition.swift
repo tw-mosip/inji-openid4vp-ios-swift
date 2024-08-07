@@ -14,16 +14,17 @@ struct PresentationDefinition: Decodable {
     }
     
     init(from decoder: Decoder) throws {
+        
         let container = try decoder.container(keyedBy: CodingKeys.self)
         
         guard let id = try container.decodeIfPresent(String.self, forKey: .id) else {
             Logger.error("PresentationDefinition : Id should be present.")
-            throw AuthenticationResponseErrors.invalidPresentationDefinition
+            throw AuthorizationRequestException.missingInput(fieldName: "id")
         }
         
         guard let inputDescriptors = try container.decodeIfPresent([InputDescriptor].self, forKey: .input_descriptors) else {
             Logger.error("PresentationDefinition : Input Descriptor should be present.")
-            throw AuthenticationResponseErrors.invalidPresentationDefinition
+            throw AuthorizationRequestException.missingInput(fieldName: "input descriptors")
         }
         
         self.id = id
@@ -37,12 +38,12 @@ struct PresentationDefinition: Decodable {
     func validate() throws {
         guard !id.isEmpty else {
             Logger.error("PresentationDefinition : Id should not be empty.")
-            throw AuthenticationResponseErrors.invalidPresentationDefinition
+            throw AuthorizationRequestException.invalidInput(key: "id")
         }
         
         guard !input_descriptors.isEmpty else {
             Logger.error("PresentationDefinition : Input descriptor should not be empty.")
-            throw AuthenticationResponseErrors.invalidPresentationDefinition
+            throw AuthorizationRequestException.invalidInput(key: "input descriptors")
         }
         
         for descriptor in input_descriptors {

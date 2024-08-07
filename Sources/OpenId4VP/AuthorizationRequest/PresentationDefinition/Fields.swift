@@ -1,6 +1,6 @@
 import Foundation
 
-struct Field: Codable {
+struct Fields: Codable {
     var path: [String]
     var id: String?
     var name: String?
@@ -22,7 +22,7 @@ struct Field: Codable {
         
         guard let path = try container.decodeIfPresent([String].self, forKey: .path) else {
             Logger.error("Field : path should be present.")
-            throw AuthenticationResponseErrors.invalidPresentationDefinition
+            throw AuthorizationRequestException.missingInput(fieldName: "path")
         }
         
         self.path = path
@@ -38,15 +38,17 @@ struct Field: Codable {
     func validate() throws {
         guard !path.isEmpty else {
             Logger.error("Field : path should not be empty.")
-            throw AuthenticationResponseErrors.invalidPresentationDefinition
+            throw AuthorizationRequestException.invalidInput(key: "path")
         }
         
-        for p in path {
-            if !(p.starts(with: Path.dollorAndDotPrefix) || p.starts(with: Path.dollorAndSquareBracketPrefix)) {
-                Logger.error("Field : path is invalid.")
-                throw AuthenticationResponseErrors.invalidPresentationDefinition
-            }
+        let pathPrefixArray = ["$.","$["]
+        if !path.allSatisfy({ p in pathPrefixArray.contains(where: { p.hasPrefix($0) }) }) {
+            Logger.error("Field : path is invalid.")
+            throw AuthorizationRequestException.invalidPresentationDefinition
         }
+
+
+
         
         if let filter = filter {
             try filter.validate()

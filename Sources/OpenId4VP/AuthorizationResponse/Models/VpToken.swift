@@ -1,10 +1,10 @@
-struct VpToken: Encodable {
-    let context = ["https://www.w3.org/2018/credentials/v1"]
-    let type = ["VerifiablePresentation"]
+public struct VpToken: Encodable {
+    let context: [String]
+    let type: [String]
     let verifiableCredential: [String]
-    let id = ""
+    let id: String
     let holder: String
-    var proof: VpProof?
+    let proof: Proof
     
     enum CodingKeys: String, CodingKey {
         case context = "@context"
@@ -13,5 +13,16 @@ struct VpToken: Encodable {
         case id
         case holder
         case proof
+    }
+    
+    static func constructVpToken(signingVPToken: VpTokenForSigning, proof: Proof) -> Self {
+        return VpToken(
+            context: signingVPToken.context,
+            type: signingVPToken.type,
+            verifiableCredential: signingVPToken.verifiableCredential,
+            id: signingVPToken.id,
+            holder: signingVPToken.holder,
+            proof: proof
+        )
     }
 }

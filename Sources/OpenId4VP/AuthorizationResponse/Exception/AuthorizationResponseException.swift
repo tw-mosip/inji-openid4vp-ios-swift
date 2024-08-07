@@ -1,4 +1,4 @@
-enum AuthorizationResponseErrors: Error {
+public enum AuthorizationResponseException: Error {
     case credentialsMapIsEmpty
     case credentialsMapValueIsEmpty
     case vpTokenEnodingFailed

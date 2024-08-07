@@ -1,14 +1,9 @@
 import Foundation
 
-struct uuid{
-    static let vpToken = UUID().uuidString.lowercased()
-    static let presentationSubmissionId = UUID().uuidString.lowercased()
+public enum Format: String, Codable {
+    case ldp_vc = "ldp_vc"
 }
 
-struct format{
-    static let ldp_vc = "ldp_vc"
-}
-
-struct ProofPurpose{
-    static let vpProofPurpose = "authentication"
+public enum ProofPurpose: String, Codable {
+    case vpProofPurpose = "authentication"
 }

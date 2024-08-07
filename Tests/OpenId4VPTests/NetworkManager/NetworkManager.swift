@@ -5,10 +5,10 @@ class MockNetworkManager: NetworkManaging {
     var response: HTTPURLResponse?
     var error: Error?
 
-    func sendHTTPPostRequest(requestBody: String, url: URL) async throws -> HTTPURLResponse? {
+    func sendHTTPPostRequest(requestBody: String, url: URL) async throws -> String? {
         if let error = error {
             throw error
         }
-        return response
+        return "Success: Request completed successfully."
     }
 }

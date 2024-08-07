@@ -16,23 +16,26 @@ class OpenId4VPTests: XCTestCase {
         response_uri: "https://example.com"
     )
     
+    let jws = "wemcn3234ns"
+    let signatureAlgoType = "RsaSignature2018"
+    let publicKey = "MIICCgKCAgEA0IEd3E5CvLAbGvr/ysYT2TLE7WDrPBHGk8pwGqVvlrrFtZJ9wT8E"
+    let domain = "https://example"
+    let descriptorMap: [DescriptorMap] = [
+        DescriptorMap(id: "bank_input", format: .ldp_vc, path: "$.verifiableCredential[0]"),
+        DescriptorMap(id: "bank_input", format: .ldp_vc, path: "$.verifiableCredential[1]")
+    ]
+    
+    let vpToken = VpTokenForSigning(verifiableCredential: ["VC1", "VC2"],holder: "")
+    
     override func setUp() {
         super.setUp()
-        
         mockNetworkManager = MockNetworkManager()
-        
-        let descriptorMap: [DescriptorMap] = [
-            DescriptorMap(id: "bank_input", format: "ldp_vc", path: "$.verifiableCredential[0]"),
-            DescriptorMap(id: "bank_input", format: "ldp_vc", path: "$.verifiableCredential[1]")
-        ]
-        
-        let vpToken = VpToken(verifiableCredential: ["VC1", "VC2"],holder: "")
         
         openId4Vp = OpenId4VP(traceabilityId: "AXESWSAW123")
         openId4Vp.presentationDefinitionId = "AWSE"
         
         AuthorizationResponse.descriptorMap = descriptorMap
-        AuthorizationResponse.vpToken = vpToken
+        AuthorizationResponse.vpTokenForSigning = vpToken
     }
     
     override func tearDown() {
@@ -58,9 +61,9 @@ class OpenId4VPTests: XCTestCase {
         ]
     ]
     
-    let testValidEncodedVpRequest = "T1BFTklENFZQOi8vYXV0aG9yaXplP2NsaWVudF9pZD1odHRwcyUzQSUyRiUyRmluaml2ZXJpZnkuZGV2Mi5tb3NpcC5uZXQmcHJlc2VudGF0aW9uX2RlZmluaXRpb249eyJpZCI6IjIzNDUzMzMiLCJpbnB1dF9kZXNjcmlwdG9ycyI6W3siaWQiOiJiYW5raW5nX2lucHV0XzEiLCJuYW1lIjoiQmFuayBBY2NvdW50IEluZm9ybWF0aW9uIiwicHVycG9zZSI6IldlIGNhbiBvbmx5IHJlbWl0IHBheW1lbnQgdG8gYSBjdXJyZW50bHktdmFsaWQgYmFuayBhY2NvdW50IGluIHRoZSBVUywgRnJhbmNlLCBvciBHZXJtYW55LCBzdWJtaXR0ZWQgYXMgYW4gQUJBIEFjY3Qgb3IgSUJBTi4iLCJjb25zdHJhaW50cyI6eyJmaWVsZHMiOlt7InBhdGgiOlsiJC5jcmVkZSJdLCJwdXJwb3NlIjoiV2UgY2FuIHVzZSBmb3IgICMgdmVyaWZpY2F0aW9uIHB1cnBvc2UgIyBmb3IgYW55dGhpbmciLCJmaWx0ZXIiOnsidHlwZSI6InN0cmluZyIsInBhdHRlcm4iOiJeWzAtOV17OX18XihbYS16QS1aXSl7NH0oW2EtekEtWl0pezJ9KFswLTlhLXpBLVpdKXsyfShbMC05YS16QS1aXXszfSk/JCJ9fSx7InBhdGgiOlsiJC52Yy5jcmVkZW50aWFsIiwiJC52Yy5jcmVkZW50aWFsU3ViamVjdC5hY2NvdW50WypdLnJvdXRlIiwiJC5hY2NvdW50WypdLnJvdXRlIl0sInB1cnBvc2UiOiJXZSBjYW4gdXNlIGZvciB2ZXJpZmljYXRpb24gcHVycG9zZSIsImZpbHRlciI6eyJ0eXBlIjoic3RyaW5nIiwicGF0dGVybiI6Il5bMC05XXs5fXxeKFthLXpBLVpdKXs0fShbYS16QS1aXSl7Mn0oWzAtOWEtekEtWl0pezJ9KFswLTlhLXpBLVpdezN9KT8kIn19XX19XX0mcmVzcG9uc2VfdHlwZT12cF90b2tlbiZyZXNwb25zZV9tb2RlPWRpcmVjdF9wb3N0Jm5vbmNlPVZiUlJCL0xUeExpWG1WTlp1eU1POEE9PSZzdGF0ZT0rbVJRZTFkNnBCb0pxRjZBYjI4a2xnPT0mcmVzcG9uc2VfdXJpPS92ZXJpZmllci92cC1yZXNwb25zZSBIVFRQLzEuMQ=="
+    let testValidEncodedVpRequest = "T1BFTklENFZQOi8vYXV0aG9yaXplP2NsaWVudF9pZD1odHRwczovL2luaml2ZXJpZnkuZGV2Mi5tb3NpcC5uZXQmcHJlc2VudGF0aW9uX2RlZmluaXRpb249eyJpZCI6IiMyMzQ1MzMzIiwiaW5wdXRfZGVzY3JpcHRvcnMiOlt7ImlkIjoiYmFua2luZ19pbnB1dF8xIiwibmFtZSI6IkJhbmsgQWNjb3VudCBJbmZvcm1hdGlvbiIsInB1cnBvc2UiOiJXZSBjYW4gb25seSByZW1pdCBwYXltZW50IHRvIGEgY3VycmVudGx5LXZhbGlkIGJhbmsgYWNjb3VudCBpbiB0aGUgVVMsIEZyYW5jZSwgb3IgR2VybWFueSwgc3VibWl0dGVkIGFzIGFuIEFCQSBBY2N0IG9yIElCQU4uIiwiY29uc3RyYWludHMiOnsiZmllbGRzIjpbeyJwYXRoIjpbIiQuY3JlZGUiXSwicHVycG9zZSI6IldlIGNhbiB1c2UgZm9yICAjIHZlcmlmaWNhdGlvbiBwdXJwb3NlICMgZm9yIGFueXRoaW5nIiwiZmlsdGVyIjp7InR5cGUiOiJzdHJpbmciLCJwYXR0ZXJuIjoiXlswLTldezl9fF4oW2EtekEtWl0pezR9KFthLXpBLVpdKXsyfShbMC05YS16QS1aXSl7Mn0oWzAtOWEtekEtWl17M30pPyQifX0seyJwYXRoIjpbIiQudmMuY3JlZGVudGlhbCIsIiQudmMuY3JlZGVudGlhbFN1YmplY3QuYWNjb3VudFsqXS5yb3V0ZSIsIiQuYWNjb3VudFsqXS5yb3V0ZSJdLCJwdXJwb3NlIjoiV2UgY2FuIHVzZSBmb3IgdmVyaWZpY2F0aW9uIHB1cnBvc2UiLCJmaWx0ZXIiOnsidHlwZSI6InN0cmluZyIsInBhdHRlcm4iOiJeWzAtOV17OX18XihbYS16QS1aXSl7NH0oW2EtekEtWl0pezJ9KFswLTlhLXpBLVpdKXsyfShbMC05YS16QS1aXXszfSk/JCJ9fV19fV19JnJlc3BvbnNlX3R5cGU9dnBfdG9rZW4mcmVzcG9uc2VfbW9kZT1kaXJlY3RfcG9zdCZub25jZT1WYlJSQi9MVHhMaVhtVk5adXlNTzhBPT0mc3RhdGU9K21SUWUxZDZwQm9KcUY2QWIyOGtsZz09JnJlc3BvbnNlX3VyaT0vdmVyaWZpZXIvdnAtcmVzcG9uc2UgSFRUUC8xLjE="
     
-    let testInvalidPresentationDefinitionVpRequest = "T1BFTklENFZQOi8vYXV0aG9yaXplP2NsaWVudF9pZD1odHRwcyUzQSUyRiUyRmluaml2ZXJpZnkuZGV2Mi5tb3NpcC5uZXQmcHJlc2VudGF0aW9uX2RlZmluaXRpb249eyJpbnB1dF9kZXNjcmlwdG9ycyI6W119JnJlc3BvbnNlX3R5cGU9dnBfdG9rZW4mcmVzcG9uc2VfbW9kZT1kaXJlY3RfcG9zdCZub25jZT1WYlJSQi9MVHhMaVhtVk5adXlNTzhBPT0mc3RhdGU9K21SUWUxZDZwQm9KcUY2QWIyOGtsZz09JnJlc3BvbnNlX3VyaT0vdmVyaWZpZXIvdnAtcmVzcG9uc2UgSFRUUC8xLjE="
+    let testInvalidPresentationDefinitionVpRequest = "T1BFTklENFZQOi8vYXV0aG9yaXplP2NsaWVudF9pZD1odHRwczovL2luaml2ZXJpZnkuZGV2Mi5tb3NpcC5uZXQmcHJlc2VudGF0aW9uX2RlZmluaXRpb249eyJpbnB1dF9kZXNjcmlwdG9ycyI6W119JnJlc3BvbnNlX3R5cGU9dnBfdG9rZW4mcmVzcG9uc2VfbW9kZT1kaXJlY3RfcG9zdCZub25jZT1WYlJSQi9MVHhMaVhtVk5adXlNTzhBPT0mc3RhdGU9K21SUWUxZDZwQm9KcUY2QWIyOGtsZz09JnJlc3BvbnNlX3VyaT0vdmVyaWZpZXIvdnAtcmVzcG9uc2UgSFRUUC8xLjE="
     
     let invalidVpRequest = "T1BFTklENFZQOi8vYXV0aG9yaXplP2NsaWVudF9pZD1odHRwcyUzQSUyRiUyRmluaml2ZXJpZnkuZGV2Mi5tb3NpcC5uZXQmcmVzcG9uc2VfdHlwZT12cF90b2tlbiZyZXNwb25zZV9tb2RlPWRpcmVjdF9wb3N0Jm5vbmNlPVZiUlJCL0xUeExpWG1WTlp1eU1POEE9PSZzdGF0ZT0rbVJRZTFkNnBCb0pxRjZBYjI4a2xnPT0mcmVzcG9uc2VfdXJpPS92ZXJpZmllci92cC1yZXNwb25zZSBIVFRQLzEuMQ=="
     
@@ -75,7 +78,7 @@ class OpenId4VPTests: XCTestCase {
         } catch {
             decoded = nil
         }
-        XCTAssertTrue(decoded is AuthenticationResponse, "decodedResponse should not be an instance of AuthenticationResponse")
+        XCTAssertTrue(decoded is AuthenticationResponse, "decodedResponse should be an instance of AuthenticationResponse")
         XCTAssertTrue(decoded != nil, "decodedResponse should not be null")
     }
     
@@ -84,7 +87,7 @@ class OpenId4VPTests: XCTestCase {
         let verifiers = createVerifiers(from: testVerifierList)
         
         XCTAssertThrowsError(try openId4Vp.authenticateVerifier(encodedAuthenticationRequest: testInvalidPresentationDefinitionVpRequest, trustedVerifierJSON: verifiers)) { error in
-            XCTAssertEqual(error as? AuthenticationResponseErrors, AuthenticationResponseErrors.invalidPresentationDefinition)
+            XCTAssertEqual(error as? AuthorizationRequestException, AuthorizationRequestException.invalidPresentationDefinition)
         }
     }
     
@@ -93,14 +96,14 @@ class OpenId4VPTests: XCTestCase {
         let verifiers = createVerifiers(from: testVerifierList)
         
         XCTAssertThrowsError(try openId4Vp.authenticateVerifier(encodedAuthenticationRequest: invalidVpRequest, trustedVerifierJSON: verifiers)) { error in
-            XCTAssertEqual(error as? AuthorizationRequestParseError, AuthorizationRequestParseError.invalidParameters)
+            XCTAssertEqual(error as? AuthorizationRequestException, AuthorizationRequestException.invalidInput(key: "PresentationDefinition or Scope"))
         }
     }
     
     func testUUIDGeneration() {
         
-        let vpToken = uuid.vpToken
-        let presentationSubmissionId = uuid.presentationSubmissionId
+        let vpToken = UUIDGenerator.generateUUID()
+        let presentationSubmissionId = UUIDGenerator.generateUUID()
         let presentationSubmission = PresentationSubmission(definition_id: "", descriptor_map: AuthorizationResponse.descriptorMap!)
         
         XCTAssertNotNil(vpToken,presentationSubmissionId)
@@ -127,20 +130,24 @@ class OpenId4VPTests: XCTestCase {
         mockNetworkManager.response = expectedResponse
 
         openId4Vp.authorizationRequest = authorizationRequest
+        
+        let vcResponseMetaData = VPResponseMetadata(jws: jws, signatureAlgorithm: signatureAlgoType, publicKey: publicKey, domain: domain)
 
-        let response = try await openId4Vp.sendVp(jws: "AXAX", signatureAlgoType: "Rsa", publicKey: "89jhh", domain: "", networkManager: mockNetworkManager)
+        let response = try await openId4Vp.shareVerifiablePresentation(vpResponseMetadata: vcResponseMetaData, networkManager: mockNetworkManager)
 
-        XCTAssertEqual(response?.statusCode, 200, "Expected status code to be 200")
+        XCTAssertEqual(response, "Success: Request completed successfully.")
     }
     
     func testSendVpFailure() async {
-           mockNetworkManager.error = NetworkError.requestFailed(NSError(domain: "", code: 0, userInfo: nil))
+           mockNetworkManager.error = NetworkRequestException.requestFailed(NSError(domain: "", code: 0, userInfo: nil))
            openId4Vp.authorizationRequest = authorizationRequest
+        
+        let vcResponseMetaData = VPResponseMetadata(jws: jws, signatureAlgorithm: signatureAlgoType, publicKey: publicKey, domain: domain)
 
            do {
-               let _ = try await openId4Vp.sendVp(jws: "AXAX", signatureAlgoType: "Rsa", publicKey: "89jhh", domain: "", networkManager: mockNetworkManager)
+               let _ = try await openId4Vp.shareVerifiablePresentation(vpResponseMetadata: vcResponseMetaData, networkManager: mockNetworkManager)
            } catch {
-               XCTAssertTrue(error is NetworkError, "Expected NetworkError")
+               XCTAssertTrue(error is NetworkRequestException, "Expected NetworkError")
            }
        }
 }
