@@ -24,7 +24,7 @@ public struct AuthenticationResponse {
         return AuthenticationResponse(response: responseDict)
     }
     
-    static func verifyClientId(verifierList: [[Verifier]], clientId: String) throws {
+    private static func verifyClientId(verifierList: [[Verifier]], clientId: String) throws {
         
         for verifiers in verifierList {
             for verifier in verifiers {

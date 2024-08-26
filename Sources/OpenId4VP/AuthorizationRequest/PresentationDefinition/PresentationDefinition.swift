@@ -1,10 +1,10 @@
 import Foundation
 
 struct PresentationDefinition: Decodable {
-    var id: String
-    var name: String?
-    var purpose: String?
-    var input_descriptors: [InputDescriptor]
+    let id: String
+    let name: String?
+    let purpose: String?
+    let input_descriptors: [InputDescriptor]
     
     enum CodingKeys: String, CodingKey {
         case id

@@ -8,14 +8,14 @@ extension Dictionary where Key == String, Value == String {
 }
 
 struct AuthorizationRequest {
-    public let clientId: String
-    public let presentation_definition: String?
-    public let scope: String?
-    public let response_type: String
-    public let response_mode: String
-    public let nonce: String
-    public let state: String
-    public let response_uri: String
+     let clientId: String
+     let presentation_definition: String?
+     let scope: String?
+     let response_type: String
+     let response_mode: String
+     let nonce: String
+     let state: String
+     let response_uri: String
     
     static func getAuthorizationRequest(encodedAuthorizationRequest: String, openId4VpInstance: OpenId4VP) throws {
         
@@ -26,11 +26,11 @@ struct AuthorizationRequest {
             throw AuthorizationRequestException.decodingFailed
         }
         
-        try AuthorizationRequest.parseAuthorizationRequest(decodedAuthorizationRequest: decodedRequest,openId4VpInstance: openId4VpInstance)
+        try parseAuthorizationRequest(decodedAuthorizationRequest: decodedRequest,openId4VpInstance: openId4VpInstance)
         
     }
     
-    static func parseAuthorizationRequest(decodedAuthorizationRequest: String, openId4VpInstance: OpenId4VP) throws {
+    private static func parseAuthorizationRequest(decodedAuthorizationRequest: String, openId4VpInstance: OpenId4VP) throws {
         
         guard let encodedRequestUrl = urlEncodedRequest(decodedAuthorizationRequest) else {
             Logger.error("URLEncoding of the AuthorizationRequest failed while parsing.")

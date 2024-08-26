@@ -1,10 +1,10 @@
 import Foundation
 
 struct InputDescriptor: Codable {
-    var id: String
-    var name: String?
-    var purpose: String?
-    var constraints: Constraints
+    let id: String
+    let name: String?
+    let purpose: String?
+    let constraints: Constraints
     
     enum CodingKeys: String, CodingKey {
         case id

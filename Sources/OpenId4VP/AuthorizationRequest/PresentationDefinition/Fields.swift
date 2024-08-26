@@ -1,12 +1,12 @@
 import Foundation
 
 struct Fields: Codable {
-    var path: [String]
-    var id: String?
-    var name: String?
-    var purpose: String?
-    var filter: Filter?
-    var optional: Bool?
+    let path: [String]
+    let id: String?
+    let name: String?
+    let purpose: String?
+    let filter: Filter?
+    let optional: Bool?
     
     enum CodingKeys: String, CodingKey {
         case path

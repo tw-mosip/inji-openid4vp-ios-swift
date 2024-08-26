@@ -1,6 +1,6 @@
 import Foundation
 
-public struct AuthorizationResponse{
+struct AuthorizationResponse{
     static var vpTokenForSigning: VpTokenForSigning?
     static var descriptorMap: [DescriptorMap]?
     
@@ -53,7 +53,7 @@ public struct AuthorizationResponse{
         return try await constructHttpRequestBody(vpToken: vpToken, presentationSubmission: presentationSubmission, responseUri: openId4VpInstance.authorizationRequest!.response_uri, networkManager: networkManager)
     }
     
-    static func constructHttpRequestBody(vpToken: VpToken, presentationSubmission: PresentationSubmission, responseUri: String, networkManager: NetworkManaging = NetworkManager.shared) async throws -> String? {
+    private static func constructHttpRequestBody(vpToken: VpToken, presentationSubmission: PresentationSubmission, responseUri: String, networkManager: NetworkManaging = NetworkManager.shared) async throws -> String? {
         
         guard let encodedVPTokenData = try? encodeToJsonString(vpToken),
               let encodedPresentationSubmissionData = try? encodeToJsonString(presentationSubmission) else {

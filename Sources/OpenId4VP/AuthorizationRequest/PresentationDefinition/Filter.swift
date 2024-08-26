@@ -1,8 +1,8 @@
 import Foundation
 
 struct Filter: Codable {
-    var type: String
-    var pattern: String
+    let type: String
+    let pattern: String
     
     enum CodingKeys: String, CodingKey {
         case type

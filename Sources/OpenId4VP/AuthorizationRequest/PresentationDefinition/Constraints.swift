@@ -1,8 +1,8 @@
 import Foundation
 
 struct Constraints: Codable {
-    var fields: [Fields]?
-    var limitDisclosure: LimitDisclosure?
+    let fields: [Fields]?
+    let limitDisclosure: LimitDisclosure?
     
     enum CodingKeys: String, CodingKey {
         case fields
