@@ -38,7 +38,7 @@ struct Fields: Codable {
     func validate() throws {
         guard !path.isEmpty else {
             Logger.error("Field : path should not be empty.")
-            throw AuthorizationRequestException.invalidInput(key: "path")
+            throw AuthorizationRequestException.invalidInput(fieldName: "path")
         }
         
         let pathPrefixArray = ["$.","$["]

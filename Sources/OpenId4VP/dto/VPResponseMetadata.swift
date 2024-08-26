@@ -14,7 +14,7 @@ public struct VPResponseMetadata {
         
         for (_, value) in requiredParams {
             if value.isEmpty || value == "null" {
-                throw AuthorizationRequestException.invalidInput(key: "\(value)")
+                throw AuthorizationRequestException.invalidInput(fieldName: "\(value)")
             }
         }
     }

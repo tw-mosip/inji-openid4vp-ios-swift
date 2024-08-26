@@ -1,6 +1,13 @@
 enum VerifierVerificationException: Error {
-    case invalidClientId
-    case clientIdNotFound
+    case clientIdNotFound(message: String)
     case redirectUriIsEmpty
-    case failedToVerifyClientId
+    
+    var localizedDescription: String {
+        switch self {
+        case .clientIdNotFound(let message):
+            return message
+        default:
+            return "An error occurred."
+        }
+    }
 }

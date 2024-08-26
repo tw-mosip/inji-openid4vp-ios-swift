@@ -38,6 +38,6 @@ public struct AuthenticationResponse {
             }
         }
         Logger.error("Client id not found in \(verifierList)")
-        throw VerifierVerificationException.clientIdNotFound
+        throw VerifierVerificationException.clientIdNotFound(message: "VP sharing failed: Verifier authentication was unsuccessful")
     }
 }

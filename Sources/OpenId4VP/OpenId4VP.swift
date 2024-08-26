@@ -19,22 +19,18 @@ public class OpenId4VP {
         
         do {
             try AuthorizationRequest.getAuthorizationRequest(encodedAuthorizationRequest: encodedAuthenticationRequest, openId4VpInstance: self)
-                
+            
             return try AuthenticationResponse.getAuthenticationResponse(authorizationRequest!, trustedVerifierJSON, openId4VpInstance: self)
             
-        } catch(let exception) {
-           await sendErrorToResponseUri(error: exception, uri: responseUri!)
-           throw exception
-        }
-    }
-    
-    public func constructVerifiablePresentation(credentialsMap: [String: [String]]) async throws ->  String? {
-        do {
-            return try AuthorizationResponse.constructVpForSigning(credentialsMap)
         } catch(let exception) {
             await sendErrorToResponseUri(error: exception, uri: responseUri!)
             throw exception
         }
+    }
+    
+    public func constructVerifiablePresentationToken(credentialsMap: [String: [String]]) async throws ->  String? {
+        
+        return try AuthorizationResponse.constructVpForSigning(credentialsMap)
     }
     
     public func shareVerifiablePresentation(vpResponseMetadata: VPResponseMetadata) async throws -> String? {
@@ -49,6 +45,9 @@ public class OpenId4VP {
     
     private func sendErrorToResponseUri(error: Error, uri: String) async {
         
+        Logger.setLogTag(className:String(describing: type(of: self)), traceabilityId: traceabilityId)
+        Logger.getLogTag(className: String(describing: type(of: self)))
+        
         guard let url = URL(string: uri) else { return }
         
         let errorInfo = """
@@ -57,12 +56,12 @@ public class OpenId4VP {
             "traceabilityId": \(traceabilityId)
         }
         """
-
-            do {
-                let response =  try await networkManager.sendHTTPPostRequest(requestBody: errorInfo, url: url)
-                print("\(String(describing: response))")
-            } catch {
-                Logger.error("Unexpected error occurred while sending the error to verifier.")
-            }
+        
+        do {
+            let response =  try await networkManager.sendHTTPPostRequest(requestBody: errorInfo, url: url)
+            print("\(String(describing: response))")
+        } catch {
+            Logger.error("Unexpected error occurred while sending the error to verifier: \(error)")
+        }
     }
 }

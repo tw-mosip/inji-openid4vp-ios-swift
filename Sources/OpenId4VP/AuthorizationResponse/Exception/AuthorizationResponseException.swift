@@ -1,8 +1,15 @@
 enum AuthorizationResponseException: Error {
     case credentialsMapIsEmpty
     case credentialsMapValueIsEmpty
-    case vpTokenEnodingFailed
-    case vpCreationFailed
-    case encodingToJsonStringFailed
+    case jsonEncodingException(fieldName: String)
     case invalidURL
+    
+    var localizedDescription: String {
+        switch self {
+        case .jsonEncodingException(let fieldName):
+            return "Error occurred while serializing \(fieldName)"
+        default:
+            return "An error occurred."
+        }
+    }
 }

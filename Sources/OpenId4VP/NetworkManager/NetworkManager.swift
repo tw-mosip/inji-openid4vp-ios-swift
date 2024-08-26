@@ -28,14 +28,14 @@ public struct NetworkManager: NetworkManaging {
                 return "Success: Request completed successfully."
             } else {
                 Logger.error("Request failed with status code: \(httpResponse.statusCode)")
-                throw NetworkRequestException.requestFailed("Request failed with status code: \(httpResponse.statusCode)" as! Error)
+                throw NetworkRequestException.networkRequestFailed(message: "Network Request failed with error response: \(httpResponse)")
             }
         } catch let error as URLError where error.code == .timedOut {
             Logger.error("Network request timed out.")
             throw NetworkRequestException.networkRequestTimeout
         } catch {
             Logger.error("Network request failed due to unknown error: \(error.localizedDescription)")
-            throw NetworkRequestException.requestFailed(error)
+            throw NetworkRequestException.networkRequestFailed(message: error.localizedDescription)
         }
     }
 }

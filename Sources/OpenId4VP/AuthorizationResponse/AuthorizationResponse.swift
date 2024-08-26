@@ -30,13 +30,13 @@ struct AuthorizationResponse{
         }
         
         self.descriptorMap = descriptorsMap
-        self.vpTokenForSigning = VpTokenForSigning(verifiableCredential: credentialsArray, holder: "") // need to check
+        self.vpTokenForSigning = VpTokenForSigning(verifiableCredential: credentialsArray, holder: "")
         
         do {
            return try encodeToJsonString(self.vpTokenForSigning)!
         } catch {
             Logger.error("VpToken generation for signing failed.")
-            throw AuthorizationResponseException.vpTokenEnodingFailed
+            throw AuthorizationResponseException.jsonEncodingException(fieldName: "vpTokenForSigning")
         }
     }
     
@@ -55,10 +55,14 @@ struct AuthorizationResponse{
     
     private static func constructHttpRequestBody(vpToken: VpToken, presentationSubmission: PresentationSubmission, responseUri: String, networkManager: NetworkManaging = NetworkManager.shared) async throws -> String? {
         
-        guard let encodedVPTokenData = try? encodeToJsonString(vpToken),
-              let encodedPresentationSubmissionData = try? encodeToJsonString(presentationSubmission) else {
-            Logger.error("Request body encoding failed.")
-            throw AuthorizationResponseException.encodingToJsonStringFailed
+        guard let encodedVPTokenData = try? encodeToJsonString(vpToken) else {
+            Logger.error("Vp token encoding failed.")
+            throw AuthorizationResponseException.jsonEncodingException(fieldName: "vpToken")
+        }
+        
+        guard let encodedPresentationSubmissionData = try? encodeToJsonString(presentationSubmission) else {
+            Logger.error("Presentation Submission encoding failed.")
+            throw AuthorizationResponseException.jsonEncodingException(fieldName: "presentationSubmission")
         }
         
         let requestBody = """

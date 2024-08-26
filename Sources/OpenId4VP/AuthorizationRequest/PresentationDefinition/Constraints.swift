@@ -31,7 +31,7 @@ struct Constraints: Codable {
         if let limitDisclosure = limitDisclosure {
             guard limitDisclosure == .required || limitDisclosure == .preferred else {
                 Logger.error("Constraints : LimitDisclosure should be either 'required' or 'preferred'.")
-                throw AuthorizationRequestException.invalidInput(key: "limit disclosure")
+                throw AuthorizationRequestException.invalidInput(fieldName: "limit disclosure")
             }
         }
     }

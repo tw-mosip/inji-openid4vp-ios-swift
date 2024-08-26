@@ -35,7 +35,7 @@ struct InputDescriptor: Codable {
     func validate() throws {
         guard !id.isEmpty else {
             Logger.error("Input Descriptor : Id should not be empty.")
-            throw AuthorizationRequestException.invalidInput(key: "id")
+            throw AuthorizationRequestException.invalidInput(fieldName: "id")
         }
         
         try constraints.validate()

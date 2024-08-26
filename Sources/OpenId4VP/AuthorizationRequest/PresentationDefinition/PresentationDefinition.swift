@@ -38,12 +38,12 @@ struct PresentationDefinition: Decodable {
     func validate() throws {
         guard !id.isEmpty else {
             Logger.error("PresentationDefinition : Id should not be empty.")
-            throw AuthorizationRequestException.invalidInput(key: "id")
+            throw AuthorizationRequestException.invalidInput(fieldName: "id")
         }
         
         guard !input_descriptors.isEmpty else {
             Logger.error("PresentationDefinition : Input descriptor should not be empty.")
-            throw AuthorizationRequestException.invalidInput(key: "input descriptors")
+            throw AuthorizationRequestException.invalidInput(fieldName: "input descriptors")
         }
         
         for descriptor in input_descriptors {

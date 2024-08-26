@@ -108,7 +108,7 @@ class OpenId4VPTests: XCTestCase {
 
         switch error {
         case .failure(let thrownError):
-            XCTAssertEqual(thrownError as? AuthorizationRequestException, AuthorizationRequestException.invalidInput(key: "PresentationDefinition or Scope"))
+            XCTAssertEqual(thrownError as? AuthorizationRequestException, AuthorizationRequestException.invalidQueryParam(message: "Either presentation_definition or scope request param must be present."))
         case .success: break
         }
     }
@@ -128,7 +128,7 @@ class OpenId4VPTests: XCTestCase {
         let received: String?
         
         do {
-            received = try await openId4Vp.constructVerifiablePresentation(credentialsMap: credentialsMap)
+            received = try await openId4Vp.constructVerifiablePresentationToken(credentialsMap: credentialsMap)
         }catch{
             received = nil
         }
@@ -145,14 +145,16 @@ class OpenId4VPTests: XCTestCase {
     }
     
     func testSendVpFailure() async {
-        mockNetworkManager.error = NetworkRequestException.requestFailed(NSError(domain: "", code: 0, userInfo: nil))
         
-        let vcResponseMetaData = VPResponseMetadata(jws: jws, signatureAlgorithm: signatureAlgoType, publicKey: publicKey, domain: domain)
+        let errorMessage = "Network Request failed with error response: response"
+        mockNetworkManager.error = NetworkRequestException.networkRequestFailed(errorMessage)
+
+           let vcResponseMetaData = VPResponseMetadata(jws: jws, signatureAlgorithm: signatureAlgoType, publicKey: publicKey, domain: domain)
 
            do {
                let _ = try await openId4Vp.shareVerifiablePresentation(vpResponseMetadata: vcResponseMetaData)
            } catch {
-               XCTAssertTrue(error is NetworkRequestException, "Expected NetworkError")
+               XCTAssertTrue(error is NetworkRequestException, "Expected NetworkRequestException but got \(type(of: error))")
            }
        }
 }

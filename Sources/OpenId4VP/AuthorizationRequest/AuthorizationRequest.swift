@@ -8,14 +8,14 @@ extension Dictionary where Key == String, Value == String {
 }
 
 struct AuthorizationRequest {
-     let clientId: String
-     let presentation_definition: String?
-     let scope: String?
-     let response_type: String
-     let response_mode: String
-     let nonce: String
-     let state: String
-     let response_uri: String
+    let clientId: String
+    let presentation_definition: String?
+    let scope: String?
+    let response_type: String
+    let response_mode: String
+    let nonce: String
+    let state: String
+    let response_uri: String
     
     static func getAuthorizationRequest(encodedAuthorizationRequest: String, openId4VpInstance: OpenId4VP) throws {
         
@@ -44,7 +44,7 @@ struct AuthorizationRequest {
         
         let params = try extractQueryParams(from: queryItems)
         
-        try validateParameters(params,openId4VpInstance)
+        try validateQueryParams(params,openId4VpInstance)
         
         openId4VpInstance.authorizationRequest = AuthorizationRequest(
             clientId: params["client_id"]!,
@@ -72,10 +72,10 @@ struct AuthorizationRequest {
         
         return extractedValues
     }
-
     
-    private static func validateParameters(_ values: [String: String],_ openId4VpInstance: OpenId4VP) throws {
-        let requiredKeys = [
+    
+    private static func validateQueryParams(_ values: [String: String],_ openId4VpInstance: OpenId4VP) throws {
+        var requiredKeys = [
             "client_id",
             "response_type",
             "response_mode",
@@ -84,21 +84,37 @@ struct AuthorizationRequest {
             "response_uri"
         ]
         
-        for key in requiredKeys {
-            if values[key] == nil {
-                Logger.error("AuthorizationRequest parameter \(key) should not be null.")
-                throw AuthorizationRequestException.parameterValuesAreEmpty
-            }
-        }
-        
-        openId4VpInstance.responseUri = values["response_uri"]
+        var errorMessage: String
         
         let presentationDefinition = values["presentation_definition"]
         let scope = values["scope"]
         
-        if (presentationDefinition == nil && scope == nil) || (presentationDefinition != nil && scope != nil) {
-            Logger.error("AuthorizationRequest parameters are invalid.")
-            throw AuthorizationRequestException.invalidInput(key: "PresentationDefinition or Scope")
+        if (presentationDefinition != nil && scope != nil) {
+            errorMessage = "Only one of presentation_definition or scope request param can be present."
+            Logger.error(errorMessage)
+            throw AuthorizationRequestException.invalidQueryParam(message: errorMessage)
+        } else if (presentationDefinition != nil) {
+            requiredKeys.append("presentation_definition")
+        } else if (scope != nil) {
+            requiredKeys.append("scope")
+        } else {
+            errorMessage = "Either presentation_definition or scope request param must be present."
+            Logger.error(errorMessage)
+            throw AuthorizationRequestException.invalidQueryParam(message: errorMessage)
+        }
+        
+        for key in requiredKeys {
+            if values[key] == nil  {
+                Logger.error("AuthorizationRequest parameter \(key) should not be null.")
+                throw AuthorizationRequestException.missingInput(fieldName: key)
+            }
+            if key == "response_uri" {
+                openId4VpInstance.responseUri = values["response_uri"]
+            }
+            if values[key] == "" || values[key] == "null" {
+                Logger.error("AuthorizationRequest parameter \(key) should not be null.")
+                throw AuthorizationRequestException.invalidInput(fieldName: key)
+            }
         }
     }
 }
