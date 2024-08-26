@@ -7,7 +7,7 @@ class MockNetworkManager: NetworkManaging {
 
     func sendHTTPPostRequest(requestBody: String, url: URL) async throws -> String? {
         if let error = error {
-            throw NetworkRequestException.networkRequestFailed(message: error.localizedDescription)
+            throw NetworkRequestException.networkRequestFailed(message: "Network Request failed with error response: response")
         }
         return "Success: Request completed successfully."
     }

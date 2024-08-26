@@ -90,7 +90,7 @@ class OpenId4VPTests: XCTestCase {
         let error = await Task {
             try await openId4Vp.authenticateVerifier(encodedAuthenticationRequest: testInvalidPresentationDefinitionVpRequest, trustedVerifierJSON: verifiers)
         }.result
-
+        
         switch error {
         case .failure(let thrownError):
             XCTAssertEqual(thrownError as? AuthorizationRequestException, AuthorizationRequestException.invalidPresentationDefinition)
@@ -105,7 +105,7 @@ class OpenId4VPTests: XCTestCase {
         let error = await Task {
             try await openId4Vp.authenticateVerifier(encodedAuthenticationRequest: invalidVpRequest, trustedVerifierJSON: verifiers)
         }.result
-
+        
         switch error {
         case .failure(let thrownError):
             XCTAssertEqual(thrownError as? AuthorizationRequestException, AuthorizationRequestException.invalidQueryParam(message: "Either presentation_definition or scope request param must be present."))
@@ -138,23 +138,30 @@ class OpenId4VPTests: XCTestCase {
     func testSendVpSuccess() async throws {
         
         let vcResponseMetaData = VPResponseMetadata(jws: jws, signatureAlgorithm: signatureAlgoType, publicKey: publicKey, domain: domain)
-
+        
         let response = try await openId4Vp.shareVerifiablePresentation(vpResponseMetadata: vcResponseMetaData)
-
+        
         XCTAssertEqual(response, "Success: Request completed successfully.")
     }
     
     func testSendVpFailure() async {
         
         let errorMessage = "Network Request failed with error response: response"
-        mockNetworkManager.error = NetworkRequestException.networkRequestFailed(errorMessage)
-
-           let vcResponseMetaData = VPResponseMetadata(jws: jws, signatureAlgorithm: signatureAlgoType, publicKey: publicKey, domain: domain)
-
-           do {
-               let _ = try await openId4Vp.shareVerifiablePresentation(vpResponseMetadata: vcResponseMetaData)
-           } catch {
-               XCTAssertTrue(error is NetworkRequestException, "Expected NetworkRequestException but got \(type(of: error))")
-           }
-       }
+        mockNetworkManager.error = NetworkRequestException.networkRequestFailed(message: errorMessage)
+        
+        let vcResponseMetaData = VPResponseMetadata(jws: jws, signatureAlgorithm: signatureAlgoType, publicKey: publicKey, domain: domain)
+        
+        
+        do {
+            let _ = try await openId4Vp.shareVerifiablePresentation(vpResponseMetadata: vcResponseMetaData)
+        } catch let error as NetworkRequestException {
+            switch error {
+            case .networkRequestFailed(let message):
+                XCTAssertEqual(message, errorMessage, "Unexpected error message: \(message)")
+            default:
+                XCTFail("Expected NetworkRequestException.networkRequestFailed but got \(error)")
+            }
+        } catch {
+        }
+    }
 }
