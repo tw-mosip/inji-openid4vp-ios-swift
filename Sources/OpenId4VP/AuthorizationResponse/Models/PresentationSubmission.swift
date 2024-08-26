@@ -1,7 +1,7 @@
 struct DescriptorMap: Encodable{
-    var id: String
-    var format: Format
-    var path: String
+    let id: String
+    let format: Format
+    let path: String
 }
 
 struct PresentationSubmission: Encodable{

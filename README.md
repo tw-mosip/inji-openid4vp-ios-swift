@@ -9,7 +9,6 @@
 - Receives the signed Verifiable presentation and sends a POST request to the URL specified in the verifier request.
 
 ## Installation
-- Clone the repo
 - In your swift application go to file > add package dependency > add the  https://github.com/mosip/inji-openid4vp-ios-swift.git in git search bar> add package
 - Import the library and use
 

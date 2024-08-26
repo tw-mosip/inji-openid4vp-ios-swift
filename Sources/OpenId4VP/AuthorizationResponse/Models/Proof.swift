@@ -1,6 +1,6 @@
 import Foundation
 
-public struct Proof: Encodable {
+struct Proof: Encodable {
     let type: String
     let created: String
     let challenge: String
