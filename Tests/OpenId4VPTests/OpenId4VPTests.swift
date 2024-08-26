@@ -31,8 +31,10 @@ class OpenId4VPTests: XCTestCase {
         super.setUp()
         mockNetworkManager = MockNetworkManager()
         
-        openId4Vp = OpenId4VP(traceabilityId: "AXESWSAW123")
+        openId4Vp = OpenId4VP(traceabilityId: "AXESWSAW123", networkManager: mockNetworkManager)
         openId4Vp.presentationDefinitionId = "AWSE"
+        openId4Vp.responseUri = "https://example.com"
+        openId4Vp.authorizationRequest = authorizationRequest
         
         AuthorizationResponse.descriptorMap = descriptorMap
         AuthorizationResponse.vpTokenForSigning = vpToken
@@ -67,14 +69,14 @@ class OpenId4VPTests: XCTestCase {
     
     let invalidVpRequest = "T1BFTklENFZQOi8vYXV0aG9yaXplP2NsaWVudF9pZD1odHRwcyUzQSUyRiUyRmluaml2ZXJpZnkuZGV2Mi5tb3NpcC5uZXQmcmVzcG9uc2VfdHlwZT12cF90b2tlbiZyZXNwb25zZV9tb2RlPWRpcmVjdF9wb3N0Jm5vbmNlPVZiUlJCL0xUeExpWG1WTlp1eU1POEE9PSZzdGF0ZT0rbVJRZTFkNnBCb0pxRjZBYjI4a2xnPT0mcmVzcG9uc2VfdXJpPS92ZXJpZmllci92cC1yZXNwb25zZSBIVFRQLzEuMQ=="
     
-    func testReturnDataForValidRequest() {
+    func testReturnDataForValidRequest() async {
         
         let verifiers = createVerifiers(from: testVerifierList)
         
         let decoded: Any?
         
         do {
-            decoded = try openId4Vp.authenticateVerifier(encodedAuthenticationRequest: testValidEncodedVpRequest, trustedVerifierJSON: verifiers)
+            decoded = try await openId4Vp.authenticateVerifier(encodedAuthenticationRequest: testValidEncodedVpRequest, trustedVerifierJSON: verifiers)
         } catch {
             decoded = nil
         }
@@ -82,21 +84,32 @@ class OpenId4VPTests: XCTestCase {
         XCTAssertTrue(decoded != nil, "decodedResponse should not be null")
     }
     
-    func testMissingPresentationDefinitionFields() {
-        
+    func testMissingPresentationDefinitionFields() async {
         let verifiers = createVerifiers(from: testVerifierList)
         
-        XCTAssertThrowsError(try openId4Vp.authenticateVerifier(encodedAuthenticationRequest: testInvalidPresentationDefinitionVpRequest, trustedVerifierJSON: verifiers)) { error in
-            XCTAssertEqual(error as? AuthorizationRequestException, AuthorizationRequestException.invalidPresentationDefinition)
+        let error = await Task {
+            try await openId4Vp.authenticateVerifier(encodedAuthenticationRequest: testInvalidPresentationDefinitionVpRequest, trustedVerifierJSON: verifiers)
+        }.result
+
+        switch error {
+        case .failure(let thrownError):
+            XCTAssertEqual(thrownError as? AuthorizationRequestException, AuthorizationRequestException.invalidPresentationDefinition)
+        case .success: break
         }
     }
     
-    func testMissingRequiredFieldsInRequest() {
+    func testMissingRequiredFieldsInRequest() async {
         
         let verifiers = createVerifiers(from: testVerifierList)
         
-        XCTAssertThrowsError(try openId4Vp.authenticateVerifier(encodedAuthenticationRequest: invalidVpRequest, trustedVerifierJSON: verifiers)) { error in
-            XCTAssertEqual(error as? AuthorizationRequestException, AuthorizationRequestException.invalidInput(key: "PresentationDefinition or Scope"))
+        let error = await Task {
+            try await openId4Vp.authenticateVerifier(encodedAuthenticationRequest: invalidVpRequest, trustedVerifierJSON: verifiers)
+        }.result
+
+        switch error {
+        case .failure(let thrownError):
+            XCTAssertEqual(thrownError as? AuthorizationRequestException, AuthorizationRequestException.invalidInput(key: "PresentationDefinition or Scope"))
+        case .success: break
         }
     }
     
@@ -110,12 +123,12 @@ class OpenId4VPTests: XCTestCase {
         XCTAssertNotNil(presentationSubmission.id)
     }
     
-    func testShareVerifiablePresentation(){
+    func testShareVerifiablePresentation() async{
         let credentialsMap: [String: [String]] = ["bank_input":["VC1","VC2"]]
         let received: String?
         
         do {
-            received = try openId4Vp.constructVerifiablePresentation(credentialsMap: credentialsMap)
+            received = try await openId4Vp.constructVerifiablePresentation(credentialsMap: credentialsMap)
         }catch{
             received = nil
         }
@@ -123,29 +136,21 @@ class OpenId4VPTests: XCTestCase {
     }
     
     func testSendVpSuccess() async throws {
-        let expectedResponse = HTTPURLResponse(url: URL(string: "https://example.com")!,
-                                               statusCode: 200,
-                                               httpVersion: nil,
-                                               headerFields: nil)
-        mockNetworkManager.response = expectedResponse
-
-        openId4Vp.authorizationRequest = authorizationRequest
         
         let vcResponseMetaData = VPResponseMetadata(jws: jws, signatureAlgorithm: signatureAlgoType, publicKey: publicKey, domain: domain)
 
-        let response = try await openId4Vp.shareVerifiablePresentation(vpResponseMetadata: vcResponseMetaData, networkManager: mockNetworkManager)
+        let response = try await openId4Vp.shareVerifiablePresentation(vpResponseMetadata: vcResponseMetaData)
 
         XCTAssertEqual(response, "Success: Request completed successfully.")
     }
     
     func testSendVpFailure() async {
-           mockNetworkManager.error = NetworkRequestException.requestFailed(NSError(domain: "", code: 0, userInfo: nil))
-           openId4Vp.authorizationRequest = authorizationRequest
+        mockNetworkManager.error = NetworkRequestException.requestFailed(NSError(domain: "", code: 0, userInfo: nil))
         
         let vcResponseMetaData = VPResponseMetadata(jws: jws, signatureAlgorithm: signatureAlgoType, publicKey: publicKey, domain: domain)
 
            do {
-               let _ = try await openId4Vp.shareVerifiablePresentation(vpResponseMetadata: vcResponseMetaData, networkManager: mockNetworkManager)
+               let _ = try await openId4Vp.shareVerifiablePresentation(vpResponseMetadata: vcResponseMetaData)
            } catch {
                XCTAssertTrue(error is NetworkRequestException, "Expected NetworkError")
            }

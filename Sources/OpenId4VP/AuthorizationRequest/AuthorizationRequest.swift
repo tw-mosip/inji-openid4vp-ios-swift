@@ -44,7 +44,7 @@ struct AuthorizationRequest {
         
         let params = try extractQueryParams(from: queryItems)
         
-        try validateParameters(params)
+        try validateParameters(params,openId4VpInstance)
         
         openId4VpInstance.authorizationRequest = AuthorizationRequest(
             clientId: params["client_id"]!,
@@ -74,7 +74,7 @@ struct AuthorizationRequest {
     }
 
     
-    private static func validateParameters(_ values: [String: String]) throws {
+    private static func validateParameters(_ values: [String: String],_ openId4VpInstance: OpenId4VP) throws {
         let requiredKeys = [
             "client_id",
             "response_type",
@@ -86,10 +86,12 @@ struct AuthorizationRequest {
         
         for key in requiredKeys {
             if values[key] == nil {
-                Logger.error("AuthorizationRequest parameters should not be null.")
+                Logger.error("AuthorizationRequest parameter \(key) should not be null.")
                 throw AuthorizationRequestException.parameterValuesAreEmpty
             }
         }
+        
+        openId4VpInstance.responseUri = values["response_uri"]
         
         let presentationDefinition = values["presentation_definition"]
         let scope = values["scope"]
