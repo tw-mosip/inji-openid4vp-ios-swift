@@ -12,13 +12,13 @@ public class OpenId4VP {
         self.networkManager = networkManager ?? NetworkManager.shared
     }
     
-    public func authenticateVerifier(encodedAuthenticationRequest: String, trustedVerifierJSON: [[Verifier]]) async throws -> AuthenticationResponse {
+    public func authenticateVerifier(encodedAuthorizationRequest: String, trustedVerifierJSON: [[Verifier]]) async throws -> AuthenticationResponse {
         
         Logger.setLogTag(className:String(describing: type(of: self)), traceabilityId: traceabilityId)
         Logger.getLogTag(className: String(describing: type(of: self)))
         
         do {
-            try AuthorizationRequest.getAuthorizationRequest(encodedAuthorizationRequest: encodedAuthenticationRequest, openId4VpInstance: self)
+            try AuthorizationRequest.getAuthorizationRequest(encodedAuthorizationRequest: encodedAuthorizationRequest, openId4VpInstance: self)
             
             return try AuthenticationResponse.getAuthenticationResponse(authorizationRequest!, trustedVerifierJSON, openId4VpInstance: self)
             

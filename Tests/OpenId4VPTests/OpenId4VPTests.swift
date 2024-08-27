@@ -76,7 +76,7 @@ class OpenId4VPTests: XCTestCase {
         let decoded: Any?
         
         do {
-            decoded = try await openId4Vp.authenticateVerifier(encodedAuthenticationRequest: testValidEncodedVpRequest, trustedVerifierJSON: verifiers)
+            decoded = try await openId4Vp.authenticateVerifier(encodedAuthorizationRequest: testValidEncodedVpRequest, trustedVerifierJSON: verifiers)
         } catch {
             decoded = nil
         }
@@ -88,7 +88,7 @@ class OpenId4VPTests: XCTestCase {
         let verifiers = createVerifiers(from: testVerifierList)
         
         let error = await Task {
-            try await openId4Vp.authenticateVerifier(encodedAuthenticationRequest: testInvalidPresentationDefinitionVpRequest, trustedVerifierJSON: verifiers)
+            try await openId4Vp.authenticateVerifier(encodedAuthorizationRequest: testInvalidPresentationDefinitionVpRequest, trustedVerifierJSON: verifiers)
         }.result
         
         switch error {
@@ -103,12 +103,12 @@ class OpenId4VPTests: XCTestCase {
         let verifiers = createVerifiers(from: testVerifierList)
         
         let error = await Task {
-            try await openId4Vp.authenticateVerifier(encodedAuthenticationRequest: invalidVpRequest, trustedVerifierJSON: verifiers)
+            try await openId4Vp.authenticateVerifier(encodedAuthorizationRequest: invalidVpRequest, trustedVerifierJSON: verifiers)
         }.result
         
         switch error {
         case .failure(let thrownError):
-            XCTAssertEqual(thrownError as? AuthorizationRequestException, AuthorizationRequestException.invalidQueryParam(message: "Either presentation_definition or scope request param must be present."))
+            XCTAssertEqual(thrownError as? AuthorizationRequestException, AuthorizationRequestException.invalidQueryParams(message: "Either presentation_definition or scope request param must be present."))
         case .success: break
         }
     }

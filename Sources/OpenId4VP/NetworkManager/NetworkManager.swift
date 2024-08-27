@@ -32,7 +32,7 @@ public struct NetworkManager: NetworkManaging {
             }
         } catch let error as URLError where error.code == .timedOut {
             Logger.error("Network request timed out.")
-            throw NetworkRequestException.networkRequestTimeout
+            throw NetworkRequestException.interruptedIOException
         } catch {
             Logger.error("Network request failed due to unknown error: \(error.localizedDescription)")
             throw NetworkRequestException.networkRequestFailed(message: error.localizedDescription)

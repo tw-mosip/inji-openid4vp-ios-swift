@@ -1,10 +1,10 @@
 enum AuthorizationRequestException: Error, Equatable {
     case jsonDecodingFailed
     case invalidPresentationDefinition
-    case invalidQueryParam(message: String)
+    case invalidQueryParams(message: String)
     case invalidInput(fieldName: String)
     case missingInput(fieldName: String)
-    case decodingFailed
+    case decodingException
     case urlCreationFailed
     case queryItemsRetrievalFailed
     case parameterValuesAreEmpty
@@ -15,7 +15,7 @@ enum AuthorizationRequestException: Error, Equatable {
             return "Invalid input for key : \(fieldName)"
         case .missingInput(let fieldName):
             return "Missing Input: \(fieldName) param is required."
-        case .invalidQueryParam(let message):
+        case .invalidQueryParams(let message):
             return message
         default:
             return "An error occurred."

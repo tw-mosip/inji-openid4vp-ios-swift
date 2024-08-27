@@ -1,7 +1,7 @@
 enum NetworkRequestException: Error {
     case invalidResponse
     case networkRequestFailed(message: String)
-    case networkRequestTimeout
+    case interruptedIOException
     
     var localizedDescription: String {
         switch self {

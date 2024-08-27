@@ -23,7 +23,7 @@ struct AuthorizationRequest {
         
         guard let decodedRequest = decodeAuthorizationRequest(encodedAuthorizationRequest) else {
             Logger.error("Decoding of the AuthorizationRequest failed.")
-            throw AuthorizationRequestException.decodingFailed
+            throw AuthorizationRequestException.decodingException
         }
         
         try parseAuthorizationRequest(decodedAuthorizationRequest: decodedRequest,openId4VpInstance: openId4VpInstance)
@@ -92,7 +92,7 @@ struct AuthorizationRequest {
         if (presentationDefinition != nil && scope != nil) {
             errorMessage = "Only one of presentation_definition or scope request param can be present."
             Logger.error(errorMessage)
-            throw AuthorizationRequestException.invalidQueryParam(message: errorMessage)
+            throw AuthorizationRequestException.invalidQueryParams(message: errorMessage)
         } else if (presentationDefinition != nil) {
             requiredKeys.append("presentation_definition")
         } else if (scope != nil) {
@@ -100,7 +100,7 @@ struct AuthorizationRequest {
         } else {
             errorMessage = "Either presentation_definition or scope request param must be present."
             Logger.error(errorMessage)
-            throw AuthorizationRequestException.invalidQueryParam(message: errorMessage)
+            throw AuthorizationRequestException.invalidQueryParams(message: errorMessage)
         }
         
         for key in requiredKeys {
