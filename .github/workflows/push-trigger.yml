@@ -1,4 +1,4 @@
-name: Push trigger for swift-library
+name: Push trigger
 
 on:
   push:
@@ -24,9 +24,9 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Set up Swift
-        uses: swift-actions/setup-swift@v1
+        uses: swift-actions/setup-swift@v2
         with:
-          swift-version: '5.9.2'  
+          swift-version: '5.10.0'  
 
       - name: Build project
         run: swift build
