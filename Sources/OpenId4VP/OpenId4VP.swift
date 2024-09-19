@@ -30,7 +30,7 @@ public class OpenId4VP {
             return try AuthenticationResponse.getAuthenticationResponse(authorizationRequest!, trustedVerifierJSON, setPresentationDefinitionId: setPresentationDefinitionId)
             
         } catch(let exception) {
-            await sendErrorToResponseUri(error: exception, uri: responseUri!)
+            await sendErrorToResponseUri(error: exception, uri: responseUri ?? "")
             throw exception
         }
     }
@@ -45,7 +45,7 @@ public class OpenId4VP {
         do {
             return try await AuthorizationResponse.shareVp(vpResponseMetadata: vpResponseMetadata,nonce: authorizationRequest!.nonce, responseUri: authorizationRequest!.responseUri,presentationDefinitionId: presentationDefinitionId!, networkManager: networkManager)
         } catch(let exception) {
-            await sendErrorToResponseUri(error: exception, uri: responseUri!)
+            await sendErrorToResponseUri(error: exception, uri: responseUri ?? "")
             throw exception
         }
     }
