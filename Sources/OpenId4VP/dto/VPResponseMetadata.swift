@@ -4,6 +4,13 @@ public struct VPResponseMetadata {
     let publicKey: String
     let domain: String
     
+    public init(jws: String, signatureAlgorithm: String, publicKey: String, domain: String) {
+        self.jws = jws
+        self.signatureAlgorithm = signatureAlgorithm
+        self.publicKey = publicKey
+        self.domain = domain
+    }
+    
     func validate() throws {
         let requiredParams: [String: String] = [
             "jws": jws,
