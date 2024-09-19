@@ -10,7 +10,7 @@ class Logger {
         }
     }
     static func getLogTag(className: String) {
-        logTag = "INJI-OpenID4Vp : \(className) | traceID \(String(describing: self.traceabilityId))"
+        logTag = "INJI-OpenID4VP : \(className) | traceID \(String(describing: self.traceabilityId))"
     }
     
     static func error(_ message: String) {

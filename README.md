@@ -52,7 +52,7 @@ This method will also notify the Verifier about the error by sending it to the r
 - Returns Json string back with verifiable presentation created using the credentials received without proof field.
 
 ```
-    let response = try openId4Vp.constructVerifiablePresentation(credentialsMap: [String: [String]])
+    let response = try openID4VP.constructVerifiablePresentation(credentialsMap: [String: [String]])
 ```
 
 ###### Parameters
@@ -71,7 +71,7 @@ This method will also notify the Verifier about the error by sending it to the r
 - Returns the response with a success message back to the wallet.
 
 ```
-    let response = try await openId4Vp.shareVerifiablePresentation(vpResponseMetadata: VPResponseMetadata)
+    let response = try await openID4VP.shareVerifiablePresentation(vpResponseMetadata: VPResponseMetadata)
 ```
 
 ###### Parameters
