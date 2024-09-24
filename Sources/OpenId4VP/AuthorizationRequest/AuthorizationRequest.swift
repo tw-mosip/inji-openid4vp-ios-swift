@@ -21,10 +21,21 @@ public struct AuthorizationRequest {
         
         Logger.getLogTag(className: String(describing: self))
         
-        guard let decodedRequest = decodeAuthorizationRequest(encodedAuthorizationRequest) else {
+        let requestParts = encodedAuthorizationRequest.components(separatedBy: "?")
+           guard requestParts.count > 1 else {
+               Logger.error("Invalid AuthorizationRequest format. No query string found.")
+               throw AuthorizationRequestException.decodingException
+           }
+           
+        let baseUrl = requestParts[0]
+        let encodedQuery = requestParts[1]
+        
+        guard let decodedQuery = decodeAuthorizationRequest(encodedQuery) else {
             Logger.error("Decoding of the AuthorizationRequest failed.")
             throw AuthorizationRequestException.decodingException
         }
+        
+        let decodedRequest = "\(baseUrl)?\(decodedQuery)"
         
         return try parseAuthorizationRequest(decodedAuthorizationRequest: decodedRequest, setResponseUri: setResponseUri)
         

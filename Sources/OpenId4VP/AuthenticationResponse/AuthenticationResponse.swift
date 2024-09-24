@@ -1,9 +1,9 @@
 import Foundation
 
 public struct AuthenticationResponse {
-    let response: [String: String]
+    public let response: [String: String]
     
-    static func getAuthenticationResponse(_ authorizationRequest: AuthorizationRequest,_ trustedVerifierJSON: [[Verifier]], setPresentationDefinitionId: (String) -> Void) throws -> AuthenticationResponse {
+    static func getAuthenticationResponse(_ authorizationRequest: AuthorizationRequest,_ trustedVerifierJSON: [Verifier], setPresentationDefinitionId: (String) -> Void) throws -> AuthenticationResponse {
         
         Logger.getLogTag(className: String(describing: self))
         
@@ -14,7 +14,7 @@ public struct AuthenticationResponse {
         if (authorizationRequest.presentationDefinition != nil) {
             let presentationDefinition = try PresentationDefinitionValidator.validate(presentatioDefinition:  authorizationRequest.presentationDefinition!)
             
-            responseDict["presentationDefinition"] = authorizationRequest.presentationDefinition
+            responseDict["presentation_definition"] = authorizationRequest.presentationDefinition
             
             setPresentationDefinitionId(presentationDefinition.id)
             
@@ -24,10 +24,9 @@ public struct AuthenticationResponse {
         return AuthenticationResponse(response: responseDict)
     }
     
-    private static func verifyClientId(verifierList: [[Verifier]], clientId: String) throws {
+    private static func verifyClientId(verifierList: [Verifier], clientId: String) throws {
         
-        for verifiers in verifierList {
-            for verifier in verifiers {
+            for verifier in verifierList {
                 if verifier.clientId == clientId {
                     guard !verifier.redirectUri.isEmpty else {
                         Logger.error("Redirect uri in verifier :\(verifier) is empty")
@@ -36,7 +35,7 @@ public struct AuthenticationResponse {
                     return
                 }
             }
-        }
+        
         Logger.error("Client id not found in \(verifierList)")
         throw VerifierVerificationException.invalidVerifierClientID(message: "VP sharing failed: Verifier authentication was unsuccessful")
     }

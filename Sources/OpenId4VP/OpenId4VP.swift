@@ -7,7 +7,7 @@ public class OpenId4VP {
     private var presentationDefinitionId: String?
     private var responseUri: String?
     
-    init(traceabilityId: String, networkManager: NetworkManaging? = nil) {
+    public init(traceabilityId: String, networkManager: NetworkManaging? = nil) {
         self.traceabilityId = traceabilityId
         self.networkManager = networkManager ?? NetworkManager.shared
     }
@@ -20,7 +20,7 @@ public class OpenId4VP {
         self.responseUri = responseUri
     }
     
-    public func authenticateVerifier(encodedAuthorizationRequest: String, trustedVerifierJSON: [[Verifier]]) async throws -> AuthenticationResponse {
+    public func authenticateVerifier(encodedAuthorizationRequest: String, trustedVerifierJSON: [Verifier]) async throws -> AuthenticationResponse {
         
         Logger.setLogTag(className:String(describing: type(of: self)), traceabilityId: traceabilityId)
         
@@ -30,7 +30,7 @@ public class OpenId4VP {
             return try AuthenticationResponse.getAuthenticationResponse(authorizationRequest!, trustedVerifierJSON, setPresentationDefinitionId: setPresentationDefinitionId)
             
         } catch(let exception) {
-            await sendErrorToResponseUri(error: exception, uri: responseUri!)
+            await sendErrorToResponseUri(error: exception, uri: responseUri ?? "")
             throw exception
         }
     }
@@ -45,7 +45,7 @@ public class OpenId4VP {
         do {
             return try await AuthorizationResponse.shareVp(vpResponseMetadata: vpResponseMetadata,nonce: authorizationRequest!.nonce, responseUri: authorizationRequest!.responseUri,presentationDefinitionId: presentationDefinitionId!, networkManager: networkManager)
         } catch(let exception) {
-            await sendErrorToResponseUri(error: exception, uri: responseUri!)
+            await sendErrorToResponseUri(error: exception, uri: responseUri ?? "")
             throw exception
         }
     }
