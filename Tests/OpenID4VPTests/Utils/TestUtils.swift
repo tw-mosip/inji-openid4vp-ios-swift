@@ -1,5 +1,5 @@
 import Foundation
-@testable import OpenId4VP
+@testable import OpenID4VP
 
 func createVerifiers(from verifierList: [[String: Any]]) -> [Verifier] {
     var verifiers: [Verifier] = []

@@ -1,8 +1,8 @@
 import XCTest
-@testable import OpenId4VP
+@testable import OpenID4VP
 
-class OpenId4VPTests: XCTestCase {
-    var openId4Vp: OpenId4VP!
+class OpenID4VPTests: XCTestCase {
+    var openID4VP: OpenID4VP!
     var mockNetworkManager: MockNetworkManager!
     
     let authorizationRequest = AuthorizationRequest(
@@ -31,17 +31,17 @@ class OpenId4VPTests: XCTestCase {
         super.setUp()
         mockNetworkManager = MockNetworkManager()
         
-        openId4Vp = OpenId4VP(traceabilityId: "AXESWSAW123", networkManager: mockNetworkManager)
-        openId4Vp.setPresentationDefinitionId("AWSE")
-        openId4Vp.setResponseUri("https://example.com")
-        openId4Vp.authorizationRequest = authorizationRequest
+        openID4VP = OpenID4VP(traceabilityId: "AXESWSAW123", networkManager: mockNetworkManager)
+        openID4VP.setPresentationDefinitionId("AWSE")
+        openID4VP.setResponseUri("https://example.com")
+        openID4VP.authorizationRequest = authorizationRequest
         
         AuthorizationResponse.descriptorMap = descriptorMap
         AuthorizationResponse.vpTokenForSigning = vpToken
     }
     
     override func tearDown() {
-        openId4Vp = nil
+        openID4VP = nil
         mockNetworkManager = nil
         super.tearDown()
     }
@@ -76,7 +76,7 @@ class OpenId4VPTests: XCTestCase {
         let decoded: Any?
         
         do {
-            decoded = try await openId4Vp.authenticateVerifier(encodedAuthorizationRequest: testValidEncodedVpRequest, trustedVerifierJSON: verifiers)
+            decoded = try await openID4VP.authenticateVerifier(encodedAuthorizationRequest: testValidEncodedVpRequest, trustedVerifierJSON: verifiers)
         } catch {
             decoded = nil
         }
@@ -88,7 +88,7 @@ class OpenId4VPTests: XCTestCase {
         let verifiers = createVerifiers(from: testVerifierList)
         
         let error = await Task {
-            try await openId4Vp.authenticateVerifier(encodedAuthorizationRequest: testInvalidPresentationDefinitionVpRequest, trustedVerifierJSON: verifiers)
+            try await openID4VP.authenticateVerifier(encodedAuthorizationRequest: testInvalidPresentationDefinitionVpRequest, trustedVerifierJSON: verifiers)
         }.result
         
         switch error {
@@ -103,7 +103,7 @@ class OpenId4VPTests: XCTestCase {
         let verifiers = createVerifiers(from: testVerifierList)
         
         let error = await Task {
-            try await openId4Vp.authenticateVerifier(encodedAuthorizationRequest: invalidVpRequest, trustedVerifierJSON: verifiers)
+            try await openID4VP.authenticateVerifier(encodedAuthorizationRequest: invalidVpRequest, trustedVerifierJSON: verifiers)
         }.result
         
         switch error {
@@ -128,7 +128,7 @@ class OpenId4VPTests: XCTestCase {
         let received: String?
         
         do {
-            received = try await openId4Vp.constructVerifiablePresentationToken(credentialsMap: credentialsMap)
+            received = try await openID4VP.constructVerifiablePresentationToken(credentialsMap: credentialsMap)
         }catch{
             received = nil
         }
@@ -139,7 +139,7 @@ class OpenId4VPTests: XCTestCase {
         
         let vcResponseMetaData = VPResponseMetadata(jws: jws, signatureAlgorithm: signatureAlgoType, publicKey: publicKey, domain: domain)
         
-        let response = try await openId4Vp.shareVerifiablePresentation(vpResponseMetadata: vcResponseMetaData)
+        let response = try await openID4VP.shareVerifiablePresentation(vpResponseMetadata: vcResponseMetaData)
         
         XCTAssertEqual(response, "Success: Request completed successfully.")
     }
@@ -153,7 +153,7 @@ class OpenId4VPTests: XCTestCase {
         
         
         do {
-            let _ = try await openId4Vp.shareVerifiablePresentation(vpResponseMetadata: vcResponseMetaData)
+            let _ = try await openID4VP.shareVerifiablePresentation(vpResponseMetadata: vcResponseMetaData)
         } catch let error as NetworkRequestException {
             switch error {
             case .networkRequestFailed(let message):
