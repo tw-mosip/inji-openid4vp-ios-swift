@@ -1,6 +1,6 @@
 import Foundation
 
-public class OpenId4VP {
+public class OpenID4VP {
     let traceabilityId: String
     let networkManager: NetworkManaging
     var authorizationRequest: AuthorizationRequest?
