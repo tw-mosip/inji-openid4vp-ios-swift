@@ -3,21 +3,21 @@
 import PackageDescription
 
 let package = Package(
-    name: "OpenId4VP",
+    name: "OpenID4VP",
     platforms: [
            .macOS(.v11),
            .iOS(.v13)
        ],
     products: [
         .library(
-            name: "OpenId4VP",
-            targets: ["OpenId4VP"]),
+            name: "OpenID4VP",
+            targets: ["OpenID4VP"]),
     ],
     targets: [
         .target(
-            name: "OpenId4VP"),
+            name: "OpenID4VP"),
         .testTarget(
-            name: "OpenId4VPTests",
-            dependencies: ["OpenId4VP"]),
+            name: "OpenID4VP",
+            dependencies: ["OpenID4VP"]),
     ]
 )

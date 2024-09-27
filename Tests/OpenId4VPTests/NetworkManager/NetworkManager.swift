@@ -1,5 +1,5 @@
 import Foundation
-@testable import OpenId4VP
+@testable import OpenID4VP
 
 class MockNetworkManager: NetworkManaging {
     var response: HTTPURLResponse?
