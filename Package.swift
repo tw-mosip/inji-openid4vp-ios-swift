@@ -17,7 +17,7 @@ let package = Package(
         .target(
             name: "OpenID4VP"),
         .testTarget(
-            name: "OpenID4VP",
+            name: "OpenID4VPTests",
             dependencies: ["OpenID4VP"]),
     ]
 )

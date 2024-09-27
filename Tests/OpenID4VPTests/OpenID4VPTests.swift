@@ -30,12 +30,12 @@ class OpenID4VPTests: XCTestCase {
     override func setUp() {
         super.setUp()
         mockNetworkManager = MockNetworkManager()
-
+        
         openID4VP = OpenID4VP(traceabilityId: "AXESWSAW123", networkManager: mockNetworkManager)
         openID4VP.setPresentationDefinitionId("AWSE")
         openID4VP.setResponseUri("https://example.com")
         openID4VP.authorizationRequest = authorizationRequest
-
+        
         AuthorizationResponse.descriptorMap = descriptorMap
         AuthorizationResponse.vpTokenForSigning = vpToken
     }
@@ -138,9 +138,9 @@ class OpenID4VPTests: XCTestCase {
     func testSendVpSuccess() async throws {
 
         let vcResponseMetaData = VPResponseMetadata(jws: jws, signatureAlgorithm: signatureAlgoType, publicKey: publicKey, domain: domain)
-
+        
         let response = try await openID4VP.shareVerifiablePresentation(vpResponseMetadata: vcResponseMetaData)
-
+        
         XCTAssertEqual(response, "Success: Request completed successfully.")
     }
 
