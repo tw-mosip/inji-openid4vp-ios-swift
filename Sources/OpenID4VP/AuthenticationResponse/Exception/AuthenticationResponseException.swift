@@ -1,6 +1,6 @@
 enum VerifierVerificationException: Error {
     case invalidVerifierClientID(message: String)
-    case redirectUriIsEmpty
+    case responseUriIsEmpty
     
     var localizedDescription: String {
         switch self {

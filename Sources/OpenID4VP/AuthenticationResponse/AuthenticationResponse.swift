@@ -26,9 +26,9 @@ public struct AuthenticationResponse {
         
             for verifier in verifierList {
                 if verifier.clientId == clientId {
-                    guard !verifier.redirectUri.isEmpty else {
-                        Logger.error("Redirect uri in verifier :\(verifier) is empty")
-                        throw VerifierVerificationException.redirectUriIsEmpty
+                    guard !verifier.responseUris.isEmpty else {
+                        Logger.error("Response uri in verifier :\(verifier) is empty")
+                        throw VerifierVerificationException.responseUriIsEmpty
                     }
                     return
                 }

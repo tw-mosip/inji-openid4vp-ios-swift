@@ -48,14 +48,14 @@ class OpenID4VPTests: XCTestCase {
     let testVerifierList:  [[String: Any]]  = [
         [
             "client_id": "https://injiverify.dev2.mosip.net",
-            "redirect_uri": [
+            "response_uris": [
                 "https://injiverify.qa-inji.mosip.net/redirect",
                 "https://injiverify.dev2.mosip.net/redirect"
             ]
         ],
         [
             "client_id": "https://injiverify.dev1.mosip.net",
-            "redirect_uri": [
+            "response_uris": [
                 "https://injiverify.qa-inji.mosip.net/redirect",
                 "https://injiverify.dev1.mosip.net/redirect"
             ]

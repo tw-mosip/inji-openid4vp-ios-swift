@@ -1,12 +1,15 @@
 # INJI-OpenID4Vp-ios-swift
 - Implementation of OpenID4VP protocols in Swift.
 
-## Features
+## Functionalities
 - Process the Authorization Request of the verifier received from the Wallet.
 - Validate and return the valid Presentation Definition to the wallet.
 - Receives the list of verifiable credentials from the wallet.
 - Constructs the verifiable presentation and send it to wallet for proof generation.
 - Receives the signed Verifiable presentation and sends a POST request to the URL specified in the verifier request.
+
+## Note
+- Fetching Verifiable Credentials by passing [Scope](https://openid.net/specs/openid-4-verifiable-presentations-1_0.html#name-using-scope-parameter-to-re) param in Authorization Request is not supported by this library.
 
 ## Installation
 - In your swift application go to file > add package dependency > add the  https://github.com/mosip/inji-openid4vp-ios-swift.git in git search bar> add package
@@ -30,7 +33,7 @@ This function takes an encoded authorization request and a JSON array of trusted
 | Name                         | Type       | Description                                                 | Sample                                              |
 |------------------------------|------------|-------------------------------------------------------------|-----------------------------------------------------|
 | encodedAuthorizationRequest | String     | Base64 Encoded authorization request.                       | `"T1BFTklENFZQOi8vYXV0"`                            |
-| trustedVerifierJSON          | [Verifier] | Array of verifiers to verify the client id of the verifier. | `Verifier(clientId: String, redirectUri: [String])` |
+| trustedVerifierJSON          | [Verifier] | Array of verifiers to verify the client id of the verifier. | `Verifier(clientId: String, responseUris: [String])` |
 
 
 ###### Exceptions
@@ -41,7 +44,7 @@ This function takes an encoded authorization request and a JSON array of trusted
     - there is a issue while extracting the params
     - presentation_definition is not present in Request
 3. InvalidInput exception is thrown if any of required params value is empty
-4. InvalidVerifierClientID exception is thrown if the received request client_iD & response_uri are not matching with any of the trusted verifiers
+4. InvalidVerifierClientID exception is thrown if the received request client_id & response_uri are not matching with any of the trusted verifiers
 
 This method will also notify the Verifier about the error by sending it to the response_uri endpoint over http post request. If response_uri is invalid and validation failed then Verifier won't be able to know about it.
 

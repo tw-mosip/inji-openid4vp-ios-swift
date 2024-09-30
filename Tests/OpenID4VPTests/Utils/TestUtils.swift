@@ -6,8 +6,8 @@ func createVerifiers(from verifierList: [[String: Any]]) -> [Verifier] {
     
     for verifierData in verifierList {
         if let clientId = verifierData["client_id"] as? String,
-           let redirectUri = verifierData["redirect_uri"] as? [String] {
-            let verifier = Verifier(clientId: clientId, redirectUri: redirectUri)
+           let responseUris = verifierData["response_uris"] as? [String] {
+            let verifier = Verifier(clientId: clientId, responseUris: responseUris)
             verifiers.append(verifier)
         }
     }
