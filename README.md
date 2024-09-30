@@ -6,7 +6,10 @@
 - Validate and return the valid Presentation Definition to the wallet.
 - Receives the list of verifiable credentials from the wallet.
 - Constructs the verifiable presentation and send it to wallet for proof generation.
-- Receives the signed Verifiable presentation and sends a POST request to the URL specified in the verifier request.
+- Receives the signed Verifiable presentation and sends a POST request to the URL specified in the verifier request. 
+
+
+  **Note** : Fetching Verifiable Credentials by passing [Scope](https://openid.net/specs/openid-4-verifiable-presentations-1_0.html#name-using-scope-parameter-to-re) param in Authorization Request is not supported by this library.
 
 ## Note
 - Fetching Verifiable Credentials by passing [Scope](https://openid.net/specs/openid-4-verifiable-presentations-1_0.html#name-using-scope-parameter-to-re) param in Authorization Request is not supported by this library.
