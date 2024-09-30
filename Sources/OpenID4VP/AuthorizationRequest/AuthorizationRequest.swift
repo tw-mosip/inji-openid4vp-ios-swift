@@ -10,7 +10,6 @@ extension Dictionary where Key == String, Value == String {
 public struct AuthorizationRequest {
     let clientId: String
     let presentationDefinition: String?
-    let scope: String?
     let responseType: String
     let responseMode: String
     let nonce: String
@@ -60,7 +59,6 @@ public struct AuthorizationRequest {
         return AuthorizationRequest(
             clientId: params["client_id"]!,
             presentationDefinition: params["presentation_definition"],
-            scope: params["scope"],
             responseType: params["response_type"]!,
             responseMode: params["response_mode"]!,
             nonce: params["nonce"]!,
@@ -98,18 +96,11 @@ public struct AuthorizationRequest {
         var errorMessage: String
         
         let presentationDefinition = values["presentation_definition"]
-        let scope = values["scope"]
         
-        if (presentationDefinition != nil && scope != nil) {
-            errorMessage = "Only one of presentation_definition or scope request param can be present."
-            Logger.error(errorMessage)
-            throw AuthorizationRequestException.invalidQueryParams(message: errorMessage)
-        } else if (presentationDefinition != nil) {
+        if (presentationDefinition != nil) {
             requiredKeys.append("presentation_definition")
-        } else if (scope != nil) {
-            requiredKeys.append("scope")
         } else {
-            errorMessage = "Either presentation_definition or scope request param must be present."
+            errorMessage = "presentation_definition request param must be present."
             Logger.error(errorMessage)
             throw AuthorizationRequestException.invalidQueryParams(message: errorMessage)
         }
