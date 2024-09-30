@@ -3,7 +3,7 @@
 
 ## Features
 - Process the Authorization Request of the verifier received from the Wallet.
-- Validate and return the valid Presentation Definition or scope to the wallet.
+- Validate and return the valid Presentation Definition to the wallet.
 - Receives the list of verifiable credentials from the wallet.
 - Constructs the verifiable presentation and send it to wallet for proof generation.
 - Receives the signed Verifiable presentation and sends a POST request to the URL specified in the verifier request.
@@ -15,9 +15,9 @@
 ## APIs
 
 ### authenticateVerifier
- - Receives a base64 Encoded request of the verifier and returns a valid Presentation Definition or Scope as response.
+ - Receives a base64 Encoded request of the verifier and returns a valid Presentation Definition as response.
 This function takes an encoded authorization request and a JSON array of trusted verifiers.
- - Returns the Authentication response which contain either validated Presentation Definition or Scope based on the request given.
+ - Returns the Authentication response which contains validated Presentation Definition of the request.
 
 
 
@@ -39,8 +39,7 @@ This function takes an encoded authorization request and a JSON array of trusted
 2. InvalidQueryParams exception is thrown if
     - query params are not present in the Request
     - there is a issue while extracting the params
-    - both presentation_definition & scope are present in Request
-    - neither presentation_definition nor scope present in Request
+    - presentation_definition is not present in Request
 3. InvalidInput exception is thrown if any of required params value is empty
 4. InvalidVerifierClientID exception is thrown if the received request client_iD & response_uri are not matching with any of the trusted verifiers
 

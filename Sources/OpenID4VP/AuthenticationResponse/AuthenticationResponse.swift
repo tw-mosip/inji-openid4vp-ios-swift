@@ -18,8 +18,6 @@ public struct AuthenticationResponse {
             
             setPresentationDefinitionId(presentationDefinition.id)
             
-        } else if authorizationRequest.scope != nil {
-            responseDict["scope"] = authorizationRequest.scope
         }
         return AuthenticationResponse(response: responseDict)
     }

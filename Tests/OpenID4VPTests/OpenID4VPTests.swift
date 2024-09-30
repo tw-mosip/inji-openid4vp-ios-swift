@@ -8,7 +8,6 @@ class OpenID4VPTests: XCTestCase {
     let authorizationRequest = AuthorizationRequest(
         clientId: "client_id",
         presentationDefinition: "presentationDefinition",
-        scope: "scope",
         responseType: "responseType",
         responseMode: "responseMode",
         nonce: "nonce",
