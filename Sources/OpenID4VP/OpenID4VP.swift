@@ -1,7 +1,7 @@
 import Foundation
 
 public class OpenID4VP {
-    let traceabilityId: String
+    public let traceabilityId: String
     let networkManager: NetworkManaging
     var authorizationRequest: AuthorizationRequest?
     private var responseUri: String?
@@ -35,7 +35,7 @@ public class OpenID4VP {
             return authorizationRequest!
 
         } catch(let exception) {
-            await sendErrorToResponseUri(error: exception, uri: responseUri ?? "")
+            await sendErrorToVerifier(error: exception)
             throw exception
         }
     }
@@ -50,16 +50,16 @@ public class OpenID4VP {
         do {
             return try await AuthorizationResponse.shareVp(vpResponseMetadata: vpResponseMetadata,nonce: authorizationRequest!.nonce, responseUri: authorizationRequest!.responseUri,presentationDefinitionId: (authorizationRequest?.presentationDefinition as! PresentationDefinition).id, networkManager: networkManager)
         } catch(let exception) {
-            await sendErrorToResponseUri(error: exception, uri: responseUri ?? "")
+            await sendErrorToVerifier(error: exception)
             throw exception
         }
     }
 
-    public func sendErrorToResponseUri(error: Error, uri: String) async {
+    public func sendErrorToVerifier(error: Error) async {
 
         Logger.getLogTag(className: String(describing: type(of: self)))
 
-        guard let url = URL(string: uri) else { return }
+        guard let url = URL(string: responseUri!) else { return }
 
         let errorInfo = """
         {
