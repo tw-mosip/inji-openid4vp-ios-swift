@@ -9,14 +9,15 @@ extension Dictionary where Key == String, Value == String {
 
 public struct AuthorizationRequest {
     let clientId: String
-    let presentationDefinition: String?
+    var presentationDefinition: Any
     let responseType: String
     let responseMode: String
     let nonce: String
     let state: String
     let responseUri: String
+    var clientMetadata: Any?
     
-    static func getAuthorizationRequest(encodedAuthorizationRequest: String, setResponseUri: (String) -> Void) throws -> AuthorizationRequest {
+    static func validateAndGetAuthorizationRequest(encodedAuthorizationRequest: String, setResponseUri: (String) -> Void) throws -> AuthorizationRequest {
         
         Logger.getLogTag(className: String(describing: self))
         
@@ -58,14 +59,14 @@ public struct AuthorizationRequest {
         
         return AuthorizationRequest(
             clientId: params["client_id"]!,
-            presentationDefinition: params["presentation_definition"],
+            presentationDefinition: params["presentation_definition"]! as String,
             responseType: params["response_type"]!,
             responseMode: params["response_mode"]!,
             nonce: params["nonce"]!,
             state: params["state"]!,
-            responseUri: params["response_uri"]!
+            responseUri: params["response_uri"]!,
+            clientMetadata: params["client_metadata"]
         )
-        
     }
     
     private static func extractQueryParams(from queryItems: [URLQueryItem]) throws -> [String: String] {
@@ -95,14 +96,16 @@ public struct AuthorizationRequest {
         
         var errorMessage: String
         
-        let presentationDefinition = values["presentation_definition"]
-        
-        if (presentationDefinition != nil) {
+        if values["presentation_definition"] != nil {
             requiredKeys.append("presentation_definition")
         } else {
             errorMessage = "presentation_definition request param must be present."
             Logger.error(errorMessage)
             throw AuthorizationRequestException.invalidQueryParams(message: errorMessage)
+        }
+        
+        if values["client_metadata"] != nil {
+            requiredKeys.append("client_metadata")
         }
         
         for key in requiredKeys {
