@@ -8,14 +8,14 @@ extension Dictionary where Key == String, Value == String {
 }
 
 public struct AuthorizationRequest: Encodable {
-    let client_id: String
-    var presentation_definition: Any
-    let response_type: String
-    let response_mode: String
+    let clientId: String
+    var presentationDefinition: Any
+    let responseType: String
+    let responseMode: String
     let nonce: String
     let state: String
-    let response_uri: String
-    var client_metadata: Any?
+    let responseUri: String
+    var clientMetadata: Any?
     
     enum CodingKeys: String, CodingKey {
         case client_id
@@ -30,20 +30,20 @@ public struct AuthorizationRequest: Encodable {
     
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(client_id, forKey: .client_id)
-        if let presentationDefString = presentation_definition as? String {
+        try container.encode(clientId, forKey: .client_id)
+        if let presentationDefString = presentationDefinition as? String {
             try container.encode(presentationDefString, forKey: .presentation_definition)
-        } else if let presentationDefObject = presentation_definition as? PresentationDefinition {
+        } else if let presentationDefObject = presentationDefinition as? PresentationDefinition {
             try container.encode(presentationDefObject, forKey: .presentation_definition)
         }
-        try container.encode(response_type, forKey: .response_type)
-        try container.encode(response_mode, forKey: .response_mode)
+        try container.encode(responseType, forKey: .response_type)
+        try container.encode(responseMode, forKey: .response_mode)
         try container.encode(nonce, forKey: .nonce)
         try container.encode(state, forKey: .state)
-        try container.encode(response_uri, forKey: .response_uri)
-        if let clientMetadataString = client_metadata as? String {
+        try container.encode(responseUri, forKey: .response_uri)
+        if let clientMetadataString = clientMetadata as? String {
             try container.encode(clientMetadataString, forKey: .client_metadata)
-        } else if let clientMetadataObject = client_metadata as? ClientMetadata {
+        } else if let clientMetadataObject = clientMetadata as? ClientMetadata {
             try container.encode(clientMetadataObject, forKey: .client_metadata)
         }
     }
@@ -89,14 +89,14 @@ public struct AuthorizationRequest: Encodable {
         try validateQueryParams(params,setResponseUri)
         
         return AuthorizationRequest(
-            client_id: params["client_id"]!,
-            presentation_definition: params["presentation_definition"]!,
-            response_type: params["response_type"]!,
-            response_mode: params["response_mode"]!,
+            clientId: params["client_id"]!,
+            presentationDefinition: params["presentation_definition"]!,
+            responseType: params["response_type"]!,
+            responseMode: params["response_mode"]!,
             nonce: params["nonce"]!,
             state: params["state"]!,
-            response_uri: params["response_uri"]!,
-            client_metadata: params["client_metadata"]
+            responseUri: params["response_uri"]!,
+            clientMetadata: params["client_metadata"]
         )
     }
     

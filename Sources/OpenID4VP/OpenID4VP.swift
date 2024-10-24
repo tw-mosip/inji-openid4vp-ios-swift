@@ -12,10 +12,10 @@ public class OpenID4VP {
     }
 
     public func updateAuthorizationRequest(_ presentationDefinition: PresentationDefinition, _ clientMetadata: ClientMetadata?) {
-        self.authorizationRequest?.presentation_definition = presentationDefinition as PresentationDefinition
+        self.authorizationRequest?.presentationDefinition = presentationDefinition as PresentationDefinition
        
         if let clientMetadata = clientMetadata {
-            self.authorizationRequest?.client_metadata = clientMetadata
+            self.authorizationRequest?.clientMetadata = clientMetadata
         }
     }
 
@@ -48,7 +48,7 @@ public class OpenID4VP {
     public func shareVerifiablePresentation(vpResponseMetadata: VPResponseMetadata) async throws -> String? {
 
         do {
-            return try await AuthorizationResponse.shareVp(vpResponseMetadata: vpResponseMetadata,nonce: authorizationRequest!.nonce, responseUri: authorizationRequest!.response_uri,presentationDefinitionId: (authorizationRequest?.presentation_definition as! PresentationDefinition).id, networkManager: networkManager)
+            return try await AuthorizationResponse.shareVp(vpResponseMetadata: vpResponseMetadata,nonce: authorizationRequest!.nonce, responseUri: authorizationRequest!.responseUri,presentationDefinitionId: (authorizationRequest?.presentationDefinition as! PresentationDefinition).id, networkManager: networkManager)
         } catch(let exception) {
             await sendErrorToVerifier(error: exception)
             throw exception

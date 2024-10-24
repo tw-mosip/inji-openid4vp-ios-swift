@@ -8,11 +8,11 @@ public struct AuthenticationResponse {
         
         var clientMetadata: ClientMetadata?
         
-        try validateVerifier(verifierList: trustedVerifierJSON, clientId: authorizationRequest.client_id, responseUri: authorizationRequest.response_uri)
+        try validateVerifier(verifierList: trustedVerifierJSON, clientId: authorizationRequest.clientId, responseUri: authorizationRequest.responseUri)
         
-        let presentationDefinition: PresentationDefinition = try PresentationDefinitionValidator.validate(presentatioDefinition: authorizationRequest.presentation_definition as! String)
+        let presentationDefinition: PresentationDefinition = try PresentationDefinitionValidator.validate(presentatioDefinition: authorizationRequest.presentationDefinition as! String)
         
-        if let clientMeta = authorizationRequest.client_metadata {
+        if let clientMeta = authorizationRequest.clientMetadata {
             clientMetadata = try ClientMetadata.decodeAndValidateClientMetadata(clientMetadata: clientMeta as! String)
         }
         
