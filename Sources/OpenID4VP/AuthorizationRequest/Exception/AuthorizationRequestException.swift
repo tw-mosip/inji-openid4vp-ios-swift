@@ -1,4 +1,6 @@
-enum AuthorizationRequestException: Error, Equatable {
+import Foundation
+
+enum AuthorizationRequestException: Error, Equatable, LocalizedError {
     case jsonDecodingFailed
     case invalidPresentationDefinition
     case invalidQueryParams(message: String)
@@ -9,7 +11,7 @@ enum AuthorizationRequestException: Error, Equatable {
     case queryItemsRetrievalFailed
     case parameterValuesAreEmpty
     
-    var localizedDescription: String {
+    public var errorDescription: String? {
         switch self {
         case .invalidInput(let fieldName):
             return "Invalid input for key : \(fieldName)"

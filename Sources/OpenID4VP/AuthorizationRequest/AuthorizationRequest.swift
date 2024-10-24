@@ -116,28 +116,17 @@ public struct AuthorizationRequest: Encodable {
     
     
     private static func validateQueryParams(_ values: [String: String], _ setResponseUri: (String) -> Void) throws {
+        
+        //Keep response_uri as first param in this list because if any other required param is not present then we need this response_uri to send error to the verifier
         var requiredKeys = [
+            "response_uri",
+            "presentation_definition",
             "client_id",
             "response_type",
             "response_mode",
             "nonce",
             "state",
-            "response_uri"
         ]
-        
-        var errorMessage: String
-        
-        if values["presentation_definition"] != nil {
-            requiredKeys.append("presentation_definition")
-        } else {
-            errorMessage = "presentation_definition request param must be present."
-            Logger.error(errorMessage)
-            throw AuthorizationRequestException.invalidQueryParams(message: errorMessage)
-        }
-        
-        if values["client_metadata"] != nil {
-            requiredKeys.append("client_metadata")
-        }
         
         for key in requiredKeys {
             if values[key] == nil  {
@@ -151,6 +140,10 @@ public struct AuthorizationRequest: Encodable {
                 Logger.error("AuthorizationRequest parameter \(key) should not be null.")
                 throw AuthorizationRequestException.invalidInput(fieldName: key)
             }
+        }
+        
+        if values["client_metadata"] != nil {
+            requiredKeys.append("client_metadata")
         }
     }
 }
