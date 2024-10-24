@@ -6,14 +6,14 @@ class OpenID4VPTests: XCTestCase {
     var mockNetworkManager: MockNetworkManager!
 
     let authorizationRequest = AuthorizationRequest(
-        client_id: "client_id",
-        presentation_definition: "presentationDefinition" as String,
-        response_type: "responseType",
-        response_mode: "responseMode",
+        clientId: "client_id",
+        presentationDefinition: "presentationDefinition" as String,
+        responseType: "responseType",
+        responseMode: "responseMode",
         nonce: "nonce",
         state: "state",
-        response_uri: "https://example.com",
-        client_metadata: "clientMetaData" as String
+        responseUri: "https://example.com",
+        clientMetadata: "clientMetaData" as String
     )
 
     let jws = "wemcn3234ns"
