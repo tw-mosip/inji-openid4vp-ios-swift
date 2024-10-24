@@ -7,15 +7,46 @@ extension Dictionary where Key == String, Value == String {
     }
 }
 
-public struct AuthorizationRequest {
-    let clientId: String
-    var presentationDefinition: Any
-    let responseType: String
-    let responseMode: String
+public struct AuthorizationRequest: Encodable {
+    let client_id: String
+    var presentation_definition: Any
+    let response_type: String
+    let response_mode: String
     let nonce: String
     let state: String
-    let responseUri: String
-    var clientMetadata: Any?
+    let response_uri: String
+    var client_metadata: Any?
+    
+    enum CodingKeys: String, CodingKey {
+        case client_id
+        case presentation_definition
+        case response_type
+        case response_mode
+        case nonce
+        case state
+        case response_uri
+        case client_metadata
+    }
+    
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(client_id, forKey: .client_id)
+        if let presentationDefString = presentation_definition as? String {
+            try container.encode(presentationDefString, forKey: .presentation_definition)
+        } else if let presentationDefObject = presentation_definition as? PresentationDefinition {
+            try container.encode(presentationDefObject, forKey: .presentation_definition)
+        }
+        try container.encode(response_type, forKey: .response_type)
+        try container.encode(response_mode, forKey: .response_mode)
+        try container.encode(nonce, forKey: .nonce)
+        try container.encode(state, forKey: .state)
+        try container.encode(response_uri, forKey: .response_uri)
+        if let clientMetadataString = client_metadata as? String {
+            try container.encode(clientMetadataString, forKey: .client_metadata)
+        } else if let clientMetadataObject = client_metadata as? ClientMetadata {
+            try container.encode(clientMetadataObject, forKey: .client_metadata)
+        }
+    }
     
     static func validateAndGetAuthorizationRequest(encodedAuthorizationRequest: String, setResponseUri: (String) -> Void) throws -> AuthorizationRequest {
         
@@ -58,14 +89,14 @@ public struct AuthorizationRequest {
         try validateQueryParams(params,setResponseUri)
         
         return AuthorizationRequest(
-            clientId: params["client_id"]!,
-            presentationDefinition: params["presentation_definition"]! as String,
-            responseType: params["response_type"]!,
-            responseMode: params["response_mode"]!,
+            client_id: params["client_id"]!,
+            presentation_definition: params["presentation_definition"]!,
+            response_type: params["response_type"]!,
+            response_mode: params["response_mode"]!,
             nonce: params["nonce"]!,
             state: params["state"]!,
-            responseUri: params["response_uri"]!,
-            clientMetadata: params["client_metadata"]
+            response_uri: params["response_uri"]!,
+            client_metadata: params["client_metadata"]
         )
     }
     

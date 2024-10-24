@@ -1,6 +1,6 @@
 import Foundation
 
-public struct PresentationDefinition: Decodable {
+public struct PresentationDefinition: Codable {
     let id: String
     let name: String?
     let purpose: String?
