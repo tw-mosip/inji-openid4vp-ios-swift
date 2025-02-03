@@ -7,6 +7,8 @@ enum AuthorizationResponseException: Error, LocalizedError {
     case invalidURL
     case unknown
     case unsupportedFormatOfLibrary
+    case unsupportedResponseType
+    case unsupportedResponseMode
     
     public var errorDescription: String? {
         switch self {

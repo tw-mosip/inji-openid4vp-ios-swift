@@ -1,3 +1,6 @@
+/**
+ vp token -> In case Presentation Exchange was used, it is a JSON String or JSON object that MUST contain a single Verifiable Presentation or an array of JSON Strings and JSON objects each of them containing a Verifiable Presentations. Each Verifiable Presentation MUST be represented as a JSON string (that is a base64url-encoded value) or a JSON object depending on a format as defined in Appendix B. When a single Verifiable Presentation is returned, the array syntax MUST NOT be used.
+ */
 public struct VpToken: Encodable {
     let context: [String]
     let type: [String]

@@ -1,10 +1,28 @@
 import Foundation
 
-protocol CredentialFormatSpecificSigningData {
+struct AnyCredentialFormatSpecificSigningData: Encodable {
+    let credentialFormatSpecificSigningData: CredentialFormatSpecificSigningData
+    
+    func encode(to encoder: Encoder) throws {
+        try credentialFormatSpecificSigningData.encode(to: encoder)
+    }
+    
+    static func encodeShapesToJSONString(shapes: [FormatType: AnyCredentialFormatSpecificSigningData]) -> String? {
+        let encoder = JSONEncoder()
+        //        encoder.outputFormatting = .prettyPrinted
+        
+        if let jsonData = try? encoder.encode(shapes) {
+            return String(data: jsonData, encoding: .utf8)
+        }
+        return nil
+    }
+}
+
+protocol CredentialFormatSpecificSigningData : Encodable {
     static func create(credentialsArray: Array<String>) -> CredentialFormatSpecificSigningData
 }
 
-struct LdpVpSpecificSigningData : CredentialFormatSpecificSigningData {
+struct LdpVpSpecificSigningData : CredentialFormatSpecificSigningData, Encodable {
     let context = ["https://www.w3.org/2018/credentials/v1"]
     let type = ["VerifiablePresentation"]
     let verifiableCredential: [String]
@@ -18,6 +36,16 @@ struct LdpVpSpecificSigningData : CredentialFormatSpecificSigningData {
         case id
         case holder
     }
+    
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(context, forKey: .context)
+        try container.encode(type, forKey: .type)
+        try container.encode(verifiableCredential, forKey: .verifiableCredential)
+        try container.encode(id, forKey: .id)
+        try container.encode(holder, forKey: .holder)
+    }
+    
     
     static func create(credentialsArray: Array<String>) -> any CredentialFormatSpecificSigningData {
         return LdpVpSpecificSigningData(verifiableCredential: credentialsArray, holder: "")
@@ -36,7 +64,7 @@ struct LdpVpSpecificSigningData : CredentialFormatSpecificSigningData {
 class CredentialFormatSpecificSigningDataMapCreator {
     
     
-    func create(selectedCredentials: [String: Array<[String: Array<Any>]>]) throws -> [FormatType: CredentialFormatSpecificSigningData] {
+    static func create(selectedCredentials: [String: Array<[String: Array<Any>]>]) throws -> [FormatType: CredentialFormatSpecificSigningData] {
         var signablePayloads: [FormatType: CredentialFormatSpecificSigningData] = [:]
         var groupedVcs: [FormatType: Any] = [:]
         
@@ -68,10 +96,10 @@ class CredentialFormatSpecificSigningDataMapCreator {
             }
         }
         
-        //group all formats ones together, call specfic creator the grouped ones
+        //group all formats ones together, call specfic creator and pass the grouped credentials
         for(credentialFormat, credentialsArray) in groupedVcs {
             if(credentialFormat == FormatType.ldp_vc){
-                signablePayloads[credentialFormat] = LdpVpSpecificSigningData.create(credentialsArray: credentialsArray as! Array<String>)
+                signablePayloads[credentialFormat] = ( LdpVpSpecificSigningData.create(credentialsArray: credentialsArray as! Array<String>))
             } else {
                 throw AuthorizationResponseException.unsupportedFormatOfLibrary
             }

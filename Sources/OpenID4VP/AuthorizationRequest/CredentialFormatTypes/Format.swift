@@ -1,5 +1,6 @@
 import Foundation
 
+
 struct Format: Codable {
     let ldpVc: LdpFormat
     static let className = String(describing: Format.self)

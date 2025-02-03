@@ -7,6 +7,6 @@
 
 import Foundation
 
-protocol CredentialFormatSpecificVPToken {
-    
+protocol CredentialFormatSpecificVPToken : Encodable {
+    static func create(ldpVPResponseMetadata:  LdpVPResponseMetadata,ldpVPTokenForSigning:  LdpVpSpecificSigningData, nonce: String) throws -> CredentialFormatSpecificVPToken
 }
