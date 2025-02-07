@@ -30,9 +30,10 @@ public class OpenID4VP {
         }
     }
 
-    public func constructVerifiablePresentationToken(credentialsMap: [String: [String]]) async throws ->  String? {
-
-        return try AuthorizationResponse.constructVpForSigning(credentialsMap)
+    public func constructVerifiablePresentationToken(credentialsMap: [String: Array<[String: Array<Any>]>]) async throws ->  String? {
+        let vpTokensForSigning =  try CredentialFormatSpecificSigningDataMapCreator.create(selectedCredentials: credentialsMap)
+        let encodedResult = try encodeVPTokenForSigning(vpTokensForSigning)
+        return encodedResult
     }
 
     public func shareVerifiablePresentation(vpResponseMetadata: VPResponseMetadata) async throws -> String? {
