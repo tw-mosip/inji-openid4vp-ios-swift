@@ -277,7 +277,11 @@ class OpenID4VPTests: XCTestCase {
 
     // Construct and return VP token for signing
     func testShareVerifiablePresentation() async{
-        let credentialsMap: [String: [String]] = ["bank_input":["VC1","VC2"]]
+        let credentialsMap: [String: Array<[String: Array<Any>]>] = [
+            "bank_input": [
+                ["ldp_vc": ["VC1"]],
+            ]
+        ]
         let received: String?
 
         do {

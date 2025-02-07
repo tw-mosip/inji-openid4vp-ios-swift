@@ -14,3 +14,19 @@ func encodeToJsonString<T: Encodable>(_ value: T) throws -> String? {
     let jsonresponse: String? = String(data: jsonData, encoding: .utf8)
     return jsonresponse
 }
+
+func encodeVPTokenForSigning(_ vpTokensForSigning: [FormatType: CredentialFormatSpecificSigningData]) throws -> String? {
+    let encoder = JSONEncoder()
+    encoder.outputFormatting = .withoutEscapingSlashes
+    var formatted: [FormatType: Data] = [:]
+    for (key,value) in vpTokensForSigning {
+        formatted[key] = try encoder.encode(value)
+    }
+    
+    let encoder1 = JSONEncoder()
+    let jsonData = try encoder1.encode(formatted)
+    let jsonresponse: String? = String(data: jsonData, encoding: .utf8)
+//    let jsonresponse: String? = String(data: jsonData, encoding: .utf8)
+    return jsonresponse
+    
+}
