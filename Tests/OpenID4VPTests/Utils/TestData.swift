@@ -107,3 +107,8 @@ let resquestUriResponseData: [String: Any] = [
     ]
 ]
 
+let credentialsMap: [String: Array<[String: Array<Any>]>] = [
+    "bank_input": [
+        ["ldp_vc": ["VC1"]],
+    ]
+]

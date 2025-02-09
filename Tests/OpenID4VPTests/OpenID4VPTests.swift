@@ -23,8 +23,8 @@ class OpenID4VPTests: XCTestCase {
     let publicKey = "-----BEGIN PUBLIC KEY-----\\nMIIBIjANBggvSPv73S\\nG5ToTt07NZPdKDrg9lSjetZup39oj12u0YoyRMlMhY0xYL6c8X1BexM7Wlp+c13o\\n1QIDAQAB\\n-----END PUBLIC KEY-----\\n"
     let domain = "https://example"
     let descriptorMap: [DescriptorMap] = [
-        DescriptorMap(id: "bank_input", format: .ldp_vc, path: "$.verifiableCredential[0]"),
-        DescriptorMap(id: "bank_input", format: .ldp_vc, path: "$.verifiableCredential[1]")
+        DescriptorMap(id: "bank_input", format: .ldp_vc, path: "$", path_nested: "$.verifiableCredential[0]"),
+        DescriptorMap(id: "bank_input", format: .ldp_vc, path: "$", path_nested: "$.verifiableCredential[1]")
     ]
     
     let decodedPresentationDefinition = "{\"id\":\"#2345333\",\"input_descriptors\":[{\"id\":\"banking_input_1\",\"name\":\"Bank Account Information\",\"purpose\":\"We can\",\"constraints\":{\"fields\":[{\"path\":[\"$.crede\"],\"purpose\":\"We can use for  # verification purpose # for anything\",\"filter\":{\"type\":\"string\",\"pattern\":\"^$\"}},{\"path\":[\"$.vc.credential\",\"$.vc.credentialSubject.account[*].route\",\"$.account[*].route\"],\"purpose\":\"We can use for verification purpose\",\"filter\":{\"type\":\"string\",\"pattern\":\"^\"}}]}}]}"
@@ -43,9 +43,6 @@ class OpenID4VPTests: XCTestCase {
         openID4VP = OpenID4VP(traceabilityId: "AXESWSAW123", networkManager: mockNetworkManager)
         openID4VP.setResponseUri("https://example.com")
         openID4VP.authorizationRequest = authorizationRequest
-        
-        AuthorizationResponse.descriptorMap = descriptorMap
-        AuthorizationResponse.vpTokenForSigning = vpToken
     }
 
     override func tearDown() {
@@ -261,7 +258,7 @@ class OpenID4VPTests: XCTestCase {
 
         let vpToken = UUIDGenerator.generateUUID()
         let presentationSubmissionId = UUIDGenerator.generateUUID()
-        let presentationSubmission = PresentationSubmission(definition_id: "", descriptor_map: AuthorizationResponse.descriptorMap!)
+        let presentationSubmission = PresentationSubmission(definition_id: "", descriptor_map: descriptorMap)
 
         XCTAssertNotNil(vpToken,presentationSubmissionId)
         XCTAssertNotNil(presentationSubmission.id)
@@ -277,11 +274,6 @@ class OpenID4VPTests: XCTestCase {
 
     // Construct and return VP token for signing
     func testShareVerifiablePresentation() async{
-        let credentialsMap: [String: Array<[String: Array<Any>]>] = [
-            "bank_input": [
-                ["ldp_vc": ["VC1"]],
-            ]
-        ]
         let received: String?
 
         do {
@@ -294,9 +286,12 @@ class OpenID4VPTests: XCTestCase {
     
     // NetworkManager Tests Success
     func testSendVpSuccess() async throws {
-        mockNetworkManager.setMockResponse(for: URL(string: "https://example.com")!, response: "Success: Request completed successfully.")
+        let verifiers = createVerifiers(from: testVerifierList)
+        try await openID4VP.authenticateVerifier(encodedAuthorizationRequest: testValidBase64EncodedVpRequestWithResponseUri, trustedVerifierJSON: verifiers, shouldValidateClient: false)
+        try await openID4VP.constructVerifiablePresentationToken(credentialsMap: credentialsMap)
+        mockNetworkManager.setMockResponse(for: URL(string: "https://injiverify.dev2.mosip.net/redirect")!, response: "Success: Request completed successfully.")
     
-        let vcResponseMetaData = VPResponseMetadata(jws: jws, signatureAlgorithm: signatureAlgoType, publicKey: publicKey, domain: domain)
+        let vcResponseMetaData = ["ldp_vc":LdpVPResponseMetadata(jws: jws, signatureAlgorithm: signatureAlgoType, publicKey: publicKey, domain: domain)]
         
         let response = try await openID4VP.shareVerifiablePresentation(vpResponseMetadata: vcResponseMetaData)
         
@@ -305,11 +300,13 @@ class OpenID4VPTests: XCTestCase {
 
     // NetworkManager Tests Failure
     func testSendVpFailure() async {
-        
+        let verifiers = createVerifiers(from: testVerifierList)
+        try? await openID4VP.authenticateVerifier(encodedAuthorizationRequest: testValidBase64EncodedVpRequestWithResponseUri, trustedVerifierJSON: verifiers, shouldValidateClient: false)
+        try? await openID4VP.constructVerifiablePresentationToken(credentialsMap: credentialsMap)
         let errorMessage = "Network Request failed with error response: response"
         mockNetworkManager.setMockResponse(for: URL(string: "https://example.com")!, error: NetworkRequestException.networkRequestFailed(message: errorMessage))
 
-        let vcResponseMetaData = VPResponseMetadata(jws: jws, signatureAlgorithm: signatureAlgoType, publicKey: publicKey, domain: domain)
+        let vcResponseMetaData = ["ldp_vc": LdpVPResponseMetadata(jws: jws, signatureAlgorithm: signatureAlgoType, publicKey: publicKey, domain: domain)]
 
 
         do {

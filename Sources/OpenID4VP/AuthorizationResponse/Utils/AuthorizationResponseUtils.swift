@@ -15,6 +15,8 @@ func encodeToJsonString<T: Encodable>(_ value: T) throws -> String? {
     return jsonresponse
 }
 
+
+//TODO: Test encoding logic separately
 func encodeVPTokenForSigning(_ vpTokensForSigning: [FormatType: CredentialFormatSpecificSigningData]) throws -> String? {
     let encoder = JSONEncoder()
     encoder.outputFormatting = .withoutEscapingSlashes

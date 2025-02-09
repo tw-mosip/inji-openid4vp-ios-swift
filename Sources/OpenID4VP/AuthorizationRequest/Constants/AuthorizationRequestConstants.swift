@@ -5,3 +5,11 @@ enum ClientIdScheme: String, Codable{
     case redirectUri = "redirect_uri"
     case did = "did"
 }
+
+enum ResponseMode : String {
+    case direct_post = "direct_post"
+}
+
+enum ResponseType: String {
+    case vp_token = "vp_token"
+}

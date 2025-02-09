@@ -5,7 +5,10 @@ enum AuthorizationResponseException: Error, LocalizedError, Equatable {
     case credentialsMapValueIsEmpty
     case jsonEncodingException(fieldName: String)
     case invalidURL
+    case unknown
     case unsupportedFormatOfLibrary
+    case unsupportedResponseType
+    case unsupportedResponseMode
     
     public var errorDescription: String? {
         switch self {
