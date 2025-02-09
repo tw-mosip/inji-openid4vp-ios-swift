@@ -26,7 +26,6 @@ class VPTokenForSigningBuilderTests : XCTestCase {
         XCTAssertThrowsError(try CredentialFormatSpecificSigningDataMapCreator.create(selectedCredentials: credentialsMap)) { error in
             XCTAssertEqual(error as! AuthorizationResponseException, AuthorizationResponseException.unsupportedFormatOfLibrary)
         }
-
     }
 }
 

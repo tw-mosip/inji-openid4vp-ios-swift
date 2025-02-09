@@ -1,17 +1,26 @@
-public struct VPResponseMetadata {
+//
+//  File.swift
+//  
+//
+//  Created by Kiruthika Jeyashankar on 07/02/25.
+//
+
+import Foundation
+
+class LdpVPResponseMetadata : VpResponseMetadata {
     let jws: String
     let signatureAlgorithm: String
     let publicKey: String
     let domain: String
-    static let className = String(describing: VPResponseMetadata.self)
-    
+    static let className = String(describing: LdpVPResponseMetadata.self)
+
     public init(jws: String, signatureAlgorithm: String, publicKey: String, domain: String) {
         self.jws = jws
         self.signatureAlgorithm = signatureAlgorithm
         self.publicKey = publicKey
         self.domain = domain
     }
-    
+
     func validate() throws {
         let requiredParams: [String: String] = [
             "jws": jws,
@@ -19,10 +28,10 @@ public struct VPResponseMetadata {
             "publicKey": publicKey,
             "domain": domain
         ]
-        
+
         for (_, value) in requiredParams {
             if value.isEmpty || value == "null" {
-                throw Logger.handleException(exceptionType: "InvalidInput", fieldPath: ["vp response metadata",value], className: VPResponseMetadata.className)
+                throw Logger.handleException(exceptionType: "InvalidInput", fieldPath: ["vp response metadata",value], className: LdpVPResponseMetadata.className)
             }
         }
     }

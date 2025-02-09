@@ -1,14 +1,20 @@
 import Foundation
 
+
 public class OpenID4VP {
     public let traceabilityId: String
     let networkManager: NetworkManaging
     var authorizationRequest: AuthorizationRequest?
+    private var authorizationResponseHandler: AuthorizationResponseHandler?
     private var responseUri: String?
+    private var credentialsMap: [String: Array<[String: Array<Any>]>]?
+    private var vpTokensForSigning: [FormatType: CredentialFormatSpecificSigningData] = [:]
 
     public init(traceabilityId: String, networkManager: NetworkManaging? = nil) {
         self.traceabilityId = traceabilityId
         self.networkManager = networkManager ?? NetworkManager.shared
+        self.authorizationResponseHandler = AuthorizationResponseHandler(networkManager: networkManager)
+        print("auth handler set up successfully with network manager")
     }
 
     public func setResponseUri(_ responseUri: String) {
@@ -30,16 +36,29 @@ public class OpenID4VP {
         }
     }
 
+    /// Creates the data which requires some input from consumer here it is - signing, this will be used by consumer for performing the required tasks
     public func constructVerifiablePresentationToken(credentialsMap: [String: Array<[String: Array<Any>]>]) async throws ->  String? {
-        let vpTokensForSigning =  try CredentialFormatSpecificSigningDataMapCreator.create(selectedCredentials: credentialsMap)
-        let encodedResult = try encodeVPTokenForSigning(vpTokensForSigning)
+        self.credentialsMap = credentialsMap
+        self.vpTokensForSigning =  try authorizationResponseHandler!.constructDataForSigning(credentialsMap: credentialsMap)
+        let encodedResult = try encodeVPTokenForSigning(self.vpTokensForSigning)
         return encodedResult
     }
 
-    public func shareVerifiablePresentation(vpResponseMetadata: VPResponseMetadata) async throws -> String? {
-
+    /// Creates authorization response based on response_type and sends the authorization response to the verifier based on the response_mode params:  vpResponseMetadata -> dictionary of format type to vpResponseMetadata (vpResponseMetadata = input required for creation of vp_token in authorization response)
+    public func shareVerifiablePresentation(vpResponseMetadata: [String: VpResponseMetadata]) async throws -> String? {
+        
         do {
-            return try await AuthorizationResponse.shareVp(vpResponseMetadata: vpResponseMetadata,nonce: authorizationRequest!.nonce, state: authorizationRequest!.state, responseUri: authorizationRequest!.responseUri!,presentationDefinitionId: authorizationRequest!.clientId, networkManager: networkManager)
+            var formattedVPResponseMetadata: [FormatType: VpResponseMetadata] = [:]
+            
+            for (key, value) in vpResponseMetadata {
+                if let enumKey = FormatType(rawValue: key) {
+                    formattedVPResponseMetadata[enumKey] = value
+                }
+            }
+            print("authorizationResponseHandler \(String(describing: self.authorizationResponseHandler.debugDescription))")
+            print("auth request \(String(describing: self.authorizationRequest))")
+            let authorizationResponse = try self.authorizationResponseHandler!.createAuthorizationReponse(authorizationRequest: self.authorizationRequest!, vpResponseMetadata: formattedVPResponseMetadata, vpTokensForSigning: self.vpTokensForSigning, credentialsMap: self.credentialsMap!)
+            return try await self.authorizationResponseHandler!.sendAuthorizationResponseToVerifier(authorizationResponse: authorizationResponse, authorizationRequest: self.authorizationRequest!)
         } catch(let exception) {
             await sendErrorToVerifier(error: exception)
             throw exception
