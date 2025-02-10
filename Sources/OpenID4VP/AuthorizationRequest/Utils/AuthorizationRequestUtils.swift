@@ -124,7 +124,6 @@ func commonRequiredKeys(params: [String: Any]) -> [String] {
     var keys = [
         "presentation_definition",
         "client_id",
-        "client_id_scheme",
         "response_type",
         "nonce",
         "state"

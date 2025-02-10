@@ -27,6 +27,7 @@ public struct AuthorizationRequest: Encodable {
         case redirect_uri
         case response_uri
         case client_metadata
+        case client_id_scheme
     }
     
     public func encode(to encoder: Encoder) throws {
@@ -38,6 +39,7 @@ public struct AuthorizationRequest: Encodable {
             try container.encode(presentationDefObject, forKey: .presentation_definition)
         }
         try container.encode(responseType, forKey: .response_type)
+        try container.encode(clientIdScheme, forKey: .client_id_scheme)
         try container.encode(responseMode, forKey: .response_mode)
         try container.encode(nonce, forKey: .nonce)
         try container.encode(state, forKey: .state)
