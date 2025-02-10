@@ -249,10 +249,11 @@ class OpenID4VPTests: XCTestCase {
 
     // Construct and return VP token for signing
     func testShareVerifiablePresentation() async{
-        let received: String?
-
+        let received: [String:String]?
+        
         do {
             received = try await openID4VP.constructVerifiablePresentationToken(credentialsMap: credentialsMap)
+            XCTAssertTrue(((received?.keys.elementsEqual(["ldp_vc"])) != nil))
         }catch{
             received = nil
         }
