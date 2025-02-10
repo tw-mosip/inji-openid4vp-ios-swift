@@ -16,10 +16,9 @@ class AuthorizationResponseHandlerTests: XCTestCase {
         clientMetadata: "clientMetaData" as String
     )
     let vpResponseMetaData = [FormatType.ldp_vc:LdpVPResponseMetadata(jws: "wemcn3234ns", signatureAlgorithm: "RsaSignature2018", publicKey: "-----BEGIN PUBLIC KEY-----\\nMIIBIjANBggvSPv73S\\nG5ToTt07NZPdKDrg9lSjetZup39oj12u0YoyRMlMhY0xYL6c8X1BexM7Wlp+c13o\\n1QIDAQAB\\n-----END PUBLIC KEY-----\\n", domain: "https://example")]
-    let credentialsMap: [String: Array<[String: Array<Any>]>] = [
-        "bank_input": [
+    let credentialsMap: [String: [String: Array<Any>]] = [
+        "bank_input":
             ["ldp_vc": ["VC1"]],
-        ]
     ]
     let vpTokensForSigning = [FormatType.ldp_vc: LdpVpSpecificSigningData(verifiableCredential: ["VC1"], holder: "wallet/app")]
     let mockNetworkManager = MockNetworkManager()
@@ -47,13 +46,13 @@ class AuthorizationResponseHandlerTests: XCTestCase {
                 DescriptorMap(
                     id: "bank_input",
                     format: FormatType.ldp_vc,
-                    path: "$[0]",
-                    path_nested: "$[0].verifiableCredential[0]"
+                    path: "$",
+                    path_nested: "$.verifiableCredential[0]"
                 )
             ]
         )
-        XCTAssertTrue(((authorizationResponse?.presentation_submission.equals(expectedPresentationSubmission)) != nil))
-        XCTAssertNotNil(authorizationResponse?.vpToken)
+        XCTAssertTrue(authorizationResponse!.presentation_submission.equals(expectedPresentationSubmission))
+        XCTAssertNotNil(authorizationResponse!.vpToken)
     }
     
     func testCreateAuthorizationResponseThrowErrorWhenResponseTypeIsNotSupportedByLibrary()  {

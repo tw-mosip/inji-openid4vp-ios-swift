@@ -11,7 +11,7 @@ public class AuthorizationResponseHandler {
         self.networkManager = networkManager ?? NetworkManager.shared
     }
     
-    func createAuthorizationReponse(authorizationRequest: AuthorizationRequest, vpResponseMetadata signingDataForAuthorizationResponseCreation: [FormatType: VpResponseMetadata],vpTokensForSigning: [FormatType: CredentialFormatSpecificSigningData], credentialsMap: [String: Array<[String: Array<Any>]>]) throws -> AuthorizationResponse {
+    func createAuthorizationReponse(authorizationRequest: AuthorizationRequest, vpResponseMetadata signingDataForAuthorizationResponseCreation: [FormatType: VpResponseMetadata],vpTokensForSigning: [FormatType: CredentialFormatSpecificSigningData], credentialsMap: [String: [String: Array<Any>]]) throws -> AuthorizationResponse {
         do {
             self.authorizationRequest = authorizationRequest
             self.vpTokensForSigning = vpTokensForSigning
@@ -62,7 +62,7 @@ public class AuthorizationResponseHandler {
         }
     }
     
-    func constructDataForSigning(credentialsMap: [String: Array<[String: Array<Any>]>])throws -> [FormatType: CredentialFormatSpecificSigningData] {
+    func constructDataForSigning(credentialsMap: [String: [String: Array<Any>]])throws -> [FormatType: CredentialFormatSpecificSigningData] {
         self.vpTokensForSigning = try CredentialFormatSpecificSigningDataMapCreator.create(selectedCredentials: credentialsMap)
         return self.vpTokensForSigning
     }
@@ -92,38 +92,39 @@ public class AuthorizationResponseHandler {
         return vpToken!
     }
     
-    private func createPresentationSubmission(credentialsMap: [String: Array<[String: Array<Any>]>], authorizationRequest: AuthorizationRequest) throws -> PresentationSubmission {
+    private func createPresentationSubmission(credentialsMap: [String: [String: Array<Any>]], authorizationRequest: AuthorizationRequest) throws -> PresentationSubmission {
         let descriptorMap = try createInputDescriptor(credentialsMap: credentialsMap)
         let presentationDefinitionId = authorizationRequest.clientId
         
         return PresentationSubmission(definition_id: presentationDefinitionId, descriptor_map: descriptorMap)
     }
     
-    private func createInputDescriptor(credentialsMap: [String: Array<[String: Array<Any>]>]) throws -> [DescriptorMap] {
+    private func createInputDescriptor(credentialsMap: [String: [String: Array<Any>]]) throws -> [DescriptorMap] {
+        //TODO: Handle for signle VP
+        //In case of only single VP, presentation_submission -> path = $, path_nest = $.verifiableCredential[n]
+        //and in case of multiple VPs, presentation_submission -> path = $[i], path_nest = $[i].verifiableCredential[n]
         var descriptorsMap: [DescriptorMap] = []
         let formatTypeMap : [String: FormatType] = ["ldp_vc": .ldp_vc]
+        let isSingleVPSharing: Bool = path.keys.count == 1
+        print("isSingleVPSharing \(isSingleVPSharing)")
         
-        //Based on multiple vps, presentation_submission to be changed to replace $[0] to $ based if single VP
-        //Format -> PathIndex, same ordering needs to be followed during VPToken creation
         for(inputDescriptorId, matchingVcs) in credentialsMap {
             do {
-                try matchingVcs.forEach { matchingVcsGroupedByCredentialFormat in
-                    for(format, _) in matchingVcsGroupedByCredentialFormat {
-                        //construct format type
-                        var formatType: FormatType? = formatTypeMap[format]
-                        let pathIndex = path[formatType!]?.index ?? path.count
-                        var nestedPathIndex = (path[formatType!]?.nestedIndex ?? 0)
-                        if(format == FormatType.ldp_vc.rawValue){
-                            formatType = .ldp_vc
-                            descriptorsMap.append(DescriptorMap(id: inputDescriptorId, format: .ldp_vc, path: "$[\(pathIndex)]", path_nested: "$[\(pathIndex)].\(LdpVpToken.internalPath)[\(nestedPathIndex)]"))
-                        }
-                        guard formatType != nil else {
-                            throw AuthorizationResponseException.unsupportedFormatOfLibrary
-                        }
-                        //increment
-                        nestedPathIndex += 1
-                        path[formatType!] = (index: pathIndex, nestedIndex: nestedPathIndex+1)
+                for(format, _) in matchingVcs {
+                    var formatType: FormatType? = formatTypeMap[format]
+                    let pathIndex = path[formatType!]?.index ?? path.count
+                    var nestedPathIndex = (path[formatType!]?.nestedIndex ?? 0)
+                    let pathIndexValue = isSingleVPSharing ? "$": "$[\(pathIndex)]"
+                    if(format == FormatType.ldp_vc.rawValue){
+                        formatType = .ldp_vc
+                        descriptorsMap.append(DescriptorMap(id: inputDescriptorId, format: .ldp_vc, path: pathIndexValue, path_nested: "\(pathIndexValue).\(LdpVpToken.internalPath)[\(nestedPathIndex)]"))
                     }
+                    guard formatType != nil else {
+                        throw AuthorizationResponseException.unsupportedFormatOfLibrary
+                    }
+                    //increment
+                    nestedPathIndex += 1
+                    path[formatType!] = (index: pathIndex, nestedIndex: nestedPathIndex+1)
                     
                 }
             } catch {
