@@ -17,6 +17,7 @@ public struct AuthorizationResponse {
         self.presentation_submission = presentation_submission
     }
 
+    //Add state field
     func encodedItems() throws -> [(name: String, value: String)] {
         //TODO: This has so much of Hard coding Can it be removed?
         let encodedVPTokenData: String, encodedPresentationSubmissionData: String

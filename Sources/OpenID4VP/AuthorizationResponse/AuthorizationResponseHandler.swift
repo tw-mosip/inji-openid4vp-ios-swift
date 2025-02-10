@@ -4,6 +4,7 @@ public class AuthorizationResponseHandler {
     let networkManager: NetworkManaging
     var vpToken: VPTokenType?
     private var vpTokensForSigning: [FormatType: CredentialFormatSpecificSigningData] = [:]
+    //Format -> PathIndex is used to follow same ordering during VPToken creation
     private    var path: [FormatType: (index: Int, nestedIndex: Int)] = [:]
     private    var authorizationRequest: AuthorizationRequest?
     
@@ -70,12 +71,14 @@ public class AuthorizationResponseHandler {
     private func createVPToken(vpTokenForSigning signedPayloads: [FormatType: VpResponseMetadata]) throws -> VPTokenType {
         var vpTokenOfCredentials: [CredentialFormatSpecificVPToken] = []
         
+        var count = 0
         for(credentialFormat, vpResponseMetata) in signedPayloads{
             do {
-                //TODO: Get nonce from AuthRequest
                 let vpTokenBuilder = try VPTokenFactory(vpResponseMetadata: vpResponseMetata, vpTokenForSigning: (self.vpTokensForSigning[credentialFormat]!), nonce: authorizationRequest!.nonce).getVPTokenBuilder(credentialFormat: credentialFormat)
                 let credentialSpecificVPToken = try vpTokenBuilder.build()
                 vpTokenOfCredentials.append(credentialSpecificVPToken)
+                path[credentialFormat] = (index: count, nestedIndex: count)
+                count += 1
             }
             catch {
                 throw error
