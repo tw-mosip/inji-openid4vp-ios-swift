@@ -46,14 +46,12 @@ let invalidJwtResponseWithoutKid = "eyJ0eXAiOiJvYXV0aC1hdXRoei1yZXErand0IiwiYWxn
 
 let paramsFromQRData = [
     "client_id": "did:web:adityankannan-tw.github.io:openid4vp:files",
-    "client_id_scheme": "did",
     "request_uri": "https://7af8-2401-4900-71c2-f74a-8d88-aa5b-2f16-294b.ngrok-free.app/verifier/get-auth-request-obj",
     "request_uri_method": "get"
 ]
 
 let resquestUriResponseData: [String: Any] = [
-    "client_id": "https://injiverify.dev2.mosip.net",
-    "client_id_scheme": "redirect_uri",
+    "client_id": "redirect_uri:https://injiverify.dev2.mosip.net",
     "redirect_uri": "https://injiverify.dev2.mosip.net",
     "presentation_definition": [
         "id": "123",

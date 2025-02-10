@@ -123,15 +123,14 @@ class OpenID4VPTests: XCTestCase {
         mockNetworkManager.setMockResponse(for: URL(string: "https://resolver.identity.foundation/1.0/identifiers/did:web:mosip.github.io:inji-mock-services:openid4vp-service:docs")!,response: didResponse)
         let verifiers = createVerifiers(from: testVerifierList)
         
-        let decodedAuthorizationRequest: Any?
         do {
-            decodedAuthorizationRequest = try await openID4VP.authenticateVerifier(encodedAuthorizationRequest: testValidSignedVpRequestWithDid, trustedVerifierJSON: verifiers, shouldValidateClient: true)
+            let decodedAuthorizationRequest = try await openID4VP.authenticateVerifier(encodedAuthorizationRequest: testValidSignedVpRequestWithDid, trustedVerifierJSON: verifiers, shouldValidateClient: true)
+            
+            XCTAssertTrue(decodedAuthorizationRequest is AuthorizationRequest, "decodedResponse should be an instance of AuthenticationResponse")
+            XCTAssertEqual((decodedAuthorizationRequest as AuthorizationRequest).clientId, "did:web:mosip.github.io:inji-mock-services:openid4vp-service:docs")
         } catch {
-            decodedAuthorizationRequest = nil
+            XCTFail("Authorization request should ahve successfully build from the provided params")
         }
-        
-        XCTAssertTrue(decodedAuthorizationRequest is AuthorizationRequest, "decodedResponse should be an instance of AuthenticationResponse")
-        XCTAssertTrue(decodedAuthorizationRequest != nil, "decodedResponse should not be null")
     }
     
     // jwt -> client_id_scheme = did, Invalid did
@@ -238,7 +237,6 @@ class OpenID4VPTests: XCTestCase {
     
     
     func testValidateVerifierForAGivenVerifierListAndRequestObject() async {
-
         let verifiers = createVerifiers(from: testVerifierList)
         
         let error = await Task {

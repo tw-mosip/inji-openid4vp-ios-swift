@@ -174,10 +174,40 @@ func updateRequiredKeys(
     }
 }
 
-func validateVerifier(verifierList: [Verifier], params: [String: Any],shouldValidateClient: Bool) throws {
+func extractClientIdScheme(clientId: String) throws -> String {
+    if(clientId.isEmpty){
+        throw AuthorizationRequestException.invalidVerifierClientID
+    }
     
-    let clientIdScheme = getStringValue(params["client_id_scheme"] ?? "")
+    let components = clientId.split(separator: ":", maxSplits: 1)
+    
+    if components.count > 1 {
+        return String(components[0])
+    } else {
+        // Fallback client_id_scheme pre-registered; pre-registered clients MUST NOT contain a : character in their Client Identifier
+        return ClientIdScheme.preRegistered.rawValue
+    }
+}
+
+func extractClientIdPartOnly(_ clientIdWithClientIdSchemeAttached: String) -> String {
+    let components = clientIdWithClientIdSchemeAttached.split(separator: ":", maxSplits: 1)
+    if components.count > 1 {
+        let clientIdScheme = String(components[0])
+        // DID client ID scheme will have the client id itself with did prefix, example - did:example:123#1. So there will not be additional prefix stating client_id_scheme
+        if(clientIdScheme == ClientIdScheme.did.rawValue){
+            return clientIdWithClientIdSchemeAttached
+        }
+        return String(components[1])
+    } else { 
+        // client_id_scheme is optional (Fallback client_id_scheme - pre-registered) i.e., a : character is not present in the Client Identifier
+        return clientIdWithClientIdSchemeAttached
+    }
+    
+}
+
+func validateVerifier(verifierList: [Verifier], params: [String: Any],shouldValidateClient: Bool) throws {
     let clientId = getStringValue(params["client_id"] ?? "")
+    let clientIdScheme = try extractClientIdScheme(clientId: clientId!)
     
     if clientIdScheme == ClientIdScheme.preRegistered.rawValue {
         
@@ -204,15 +234,16 @@ func validateVerifier(verifierList: [Verifier], params: [String: Any],shouldVali
             }
         }
     }
+    
+    //If the Wallet does not support the Client Identifier Scheme, the Wallet MUST refuse the request.
+    guard ClientIdScheme.allCases.contains(where: { $0.rawValue == clientIdScheme }) else {
+        throw AuthorizationRequestException.invalidRequest(message: "Wallet does not support the Client Identifier Scheme - \(clientIdScheme) passed in the Authorization Request.")
+    }
 }
 
 func validateMatchOfAuthRequestObjectAndParams(params: [String: String], requestUriParams: [String: String]) throws {
     guard params["client_id"] == requestUriParams["client_id"] else {
         throw Logger.handleException(exceptionType: "MismatchingClientIDInRequest", className: AuthorizationRequest.className)
-    }
-    
-    guard params["client_id_scheme"] == requestUriParams["client_id_scheme"] else {
-        throw Logger.handleException(exceptionType: "MismatchingClientIdSchemeInRequest", className: AuthorizationRequest.className)
     }
 }
 
