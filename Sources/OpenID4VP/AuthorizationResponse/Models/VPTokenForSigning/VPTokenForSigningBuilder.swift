@@ -10,31 +10,30 @@ import Foundation
  */
 
 public class CredentialFormatSpecificSigningDataMapCreator {
-    static func create(selectedCredentials: [String: Array<[String: Array<Any>]>]) throws -> [FormatType: CredentialFormatSpecificSigningData] {
+    static func create(selectedCredentials: [String: [String: Array<Any>]]) throws -> [FormatType: CredentialFormatSpecificSigningData] {
         var signablePayloads: [FormatType: CredentialFormatSpecificSigningData] = [:]
         var groupedVcs: [FormatType: Any] = [:]
         
         // iterate selected credentials
         for(inputDescriptorId, matchingVcs) in selectedCredentials {
             do {
-                try matchingVcs.forEach { matchingVcsGroupedByCredentialFormat in
-                    for(format, matchingVcOfFormat) in matchingVcsGroupedByCredentialFormat {
-                        //construct format type
-                        var formatType: FormatType? = nil
-                        if(format == FormatType.ldp_vc.rawValue){
-                            formatType = .ldp_vc
-                        }
-                        guard formatType != nil else {
-                            throw AuthorizationResponseException.unsupportedFormatOfLibrary
-                        }
-                        //group all the vp formats togetehr to pass to signable payload creation
-                        if(groupedVcs[formatType!] == nil){
-                            groupedVcs[formatType!] = matchingVcOfFormat
-                        } else {
-                            var existingData = groupedVcs[formatType!] as? Array<Any>
-                            existingData?.append(contentsOf: matchingVcOfFormat)
-                            groupedVcs.updateValue(existingData!, forKey: formatType!)
-                        }
+                
+                for(format, matchingVcOfFormat) in matchingVcs {
+                    //construct format type
+                    var formatType: FormatType? = nil
+                    if(format == FormatType.ldp_vc.rawValue){
+                        formatType = .ldp_vc
+                    }
+                    guard formatType != nil else {
+                        throw AuthorizationResponseException.unsupportedFormatOfLibrary
+                    }
+                    //group all the vp formats togetehr to pass to signable payload creation
+                    if(groupedVcs[formatType!] == nil){
+                        groupedVcs[formatType!] = matchingVcOfFormat
+                    } else {
+                        var existingData = groupedVcs[formatType!] as? Array<Any>
+                        existingData?.append(contentsOf: matchingVcOfFormat)
+                        groupedVcs.updateValue(existingData!, forKey: formatType!)
                     }
                 }
             } catch {

@@ -7,7 +7,7 @@
 
 import Foundation
 
-class LdpVPResponseMetadata : VpResponseMetadata {
+public class LdpVPResponseMetadata : VpResponseMetadata {
     let jws: String
     let signatureAlgorithm: String
     let publicKey: String
