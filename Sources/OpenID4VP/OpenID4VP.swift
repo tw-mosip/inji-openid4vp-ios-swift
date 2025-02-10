@@ -37,7 +37,7 @@ public class OpenID4VP {
     }
 
     /// Creates the data which requires some input from consumer here it is - signing, this will be used by consumer for performing the required tasks
-    public func constructVerifiablePresentationToken(credentialsMap: [String: Array<[String: Array<Any>]>]) async throws ->  String? {
+    public func constructVerifiablePresentationToken(credentialsMap: [String: Array<[String: Array<Any>]>]) async throws ->  [String: String] {
         self.credentialsMap = credentialsMap
         self.vpTokensForSigning =  try authorizationResponseHandler!.constructDataForSigning(credentialsMap: credentialsMap)
         let encodedResult = try encodeVPTokenForSigning(self.vpTokensForSigning)
