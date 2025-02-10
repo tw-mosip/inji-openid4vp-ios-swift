@@ -2,6 +2,7 @@ import Foundation
 import JSONWebSignature
 import CryptoKit
 
+//TODO: Separate data representation and validation + object creation logic
 public struct AuthorizationRequest: Encodable {
     let clientId: String
     let clientIdScheme: String
@@ -18,7 +19,6 @@ public struct AuthorizationRequest: Encodable {
     
     enum CodingKeys: String, CodingKey {
         case client_id
-        case client_id_scheme
         case presentation_definition
         case response_type
         case response_mode
@@ -32,7 +32,6 @@ public struct AuthorizationRequest: Encodable {
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(clientId, forKey: .client_id)
-        try container.encode(clientIdScheme, forKey: .client_id_scheme)
         if let presentationDefString = presentationDefinition as? String {
             try container.encode(presentationDefString, forKey: .presentation_definition)
         } else if let presentationDefObject = presentationDefinition as? PresentationDefinition {
@@ -132,7 +131,9 @@ public struct AuthorizationRequest: Encodable {
             try validateMatchOfAuthRequestObjectAndParams(params: params, requestUriParams: authorizationRequestObject)
             
             let proofJwtManager = ProofJwtManager(networkManager: networkManager)
-            try await proofJwtManager.verifyJWT(jwtToken: response, clientId: authorizationRequestObject["client_id"]!, clienIdScheme: authorizationRequestObject["client_id_scheme"]!)
+            let clientId = authorizationRequestObject["client_id"]!
+            let clientIdScheme = try extractClientIdScheme(clientId: clientId)
+            try await proofJwtManager.verifyJWT(jwtToken: response, clientId: clientId, clienIdScheme: clientIdScheme)
             
             return authorizationRequestObject
         }
@@ -169,11 +170,15 @@ public struct AuthorizationRequest: Encodable {
         return values
     }
     
+    
+    
     private static func createAuthorizationRequest(from params: [String: Any]) -> AuthorizationRequest {
-        
+        let clientId =  getStringValue(params["client_id"])!
+        let clientIdScheme = (try? extractClientIdScheme(clientId: clientId))!
+        let extractedClientIdWithoutClientIdSchemePrefix = extractClientIdPartOnly(clientId)
         return AuthorizationRequest(
-            clientId: getStringValue(params["client_id"])!,
-            clientIdScheme: getStringValue(params["client_id_scheme"])!,
+            clientId: extractedClientIdWithoutClientIdSchemePrefix,
+            clientIdScheme: clientIdScheme,
             presentationDefinition: params["presentation_definition"]! as! PresentationDefinition,
             responseType: getStringValue(params["response_type"])!,
             responseMode: getStringValue(params["response_mode"]),
