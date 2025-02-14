@@ -53,15 +53,14 @@ class OpenID4VPTests: XCTestCase {
 
     // base64 -> client_id_scheme = redirect_uri
     func testReturnDataForValidRequestWithRedirectUri() async {
-
         let verifiers = createVerifiers(from: testVerifierList)
 
-        let decoded: Any?
+        var decoded: Any? = nil
 
         do {
-            decoded = try await openID4VP.authenticateVerifier(encodedAuthorizationRequest: testValidBase64EncodedVpRequestWithRedirectUri, trustedVerifierJSON: verifiers, shouldValidateClient: true)
+            decoded = try await openID4VP.authenticateVerifier(encodedAuthorizationRequest: encodedAuthorizationRequestInRedirectUriScheme, trustedVerifierJSON: verifiers, shouldValidateClient: true)
         } catch {
-            decoded = nil
+            XCTFail("Error should be captured, but got error - \(error)")
         }
         XCTAssertTrue(decoded is AuthorizationRequest, "decodedResponse should be an instance of AuthenticationResponse")
         XCTAssertTrue(decoded != nil, "decodedResponse should not be null")
@@ -103,13 +102,13 @@ class OpenID4VPTests: XCTestCase {
     
     // base64 -> client_id_scheme = response_uri
     func testReturnDataForValidRequestWithResponseUri() async {
-
+        print("encodedAuthorizationRequestInPreRegisteredScheme \(encodedAuthorizationRequestInPreRegisteredScheme)")
         let verifiers = createVerifiers(from: testVerifierList)
 
         let decoded: Any?
 
         do {
-            decoded = try await openID4VP.authenticateVerifier(encodedAuthorizationRequest: testValidBase64EncodedVpRequestWithResponseUri, trustedVerifierJSON: verifiers, shouldValidateClient: true)
+            decoded = try await openID4VP.authenticateVerifier(encodedAuthorizationRequest: encodedAuthorizationRequestInPreRegisteredScheme, trustedVerifierJSON: verifiers, shouldValidateClient: true)
         } catch {
             decoded = nil
         }
@@ -189,13 +188,12 @@ class OpenID4VPTests: XCTestCase {
     
     // base64 -> client_id_scheme = redirect_uri, Client id validation is false
     func testReturnDataForValidRequestWhenClientValidationIsFalse() async {
-
-        let verifiers = createVerifiers(from: testVerifierList)
+        let verifiers: [Verifier] = []
 
         let decoded: Any?
 
         do {
-            decoded = try await openID4VP.authenticateVerifier(encodedAuthorizationRequest: testValidBase64EncodedVpRequestWithRedirectUri, trustedVerifierJSON: verifiers, shouldValidateClient: false)
+            decoded = try await openID4VP.authenticateVerifier(encodedAuthorizationRequest: encodedAuthorizationRequestInRedirectUriScheme, trustedVerifierJSON: verifiers, shouldValidateClient: false)
         } catch {
             decoded = nil
         }
@@ -286,7 +284,7 @@ class OpenID4VPTests: XCTestCase {
     // NetworkManager Tests Success
     func testSendVpSuccess() async throws {
         let verifiers = createVerifiers(from: testVerifierList)
-        try await openID4VP.authenticateVerifier(encodedAuthorizationRequest: testValidBase64EncodedVpRequestWithResponseUri, trustedVerifierJSON: verifiers, shouldValidateClient: false)
+        try await openID4VP.authenticateVerifier(encodedAuthorizationRequest: encodedAuthorizationRequestInPreRegisteredScheme, trustedVerifierJSON: verifiers, shouldValidateClient: false)
         try await openID4VP.constructVerifiablePresentationToken(credentialsMap: credentialsMap)
         mockNetworkManager.setMockResponse(for: URL(string: "https://injiverify.dev2.mosip.net/redirect")!, response: "Success: Request completed successfully.")
     
@@ -300,7 +298,7 @@ class OpenID4VPTests: XCTestCase {
     // NetworkManager Tests Failure
     func testSendVpFailure() async {
         let verifiers = createVerifiers(from: testVerifierList)
-        try? await openID4VP.authenticateVerifier(encodedAuthorizationRequest: testValidBase64EncodedVpRequestWithResponseUri, trustedVerifierJSON: verifiers, shouldValidateClient: false)
+        try? await openID4VP.authenticateVerifier(encodedAuthorizationRequest: encodedAuthorizationRequestInPreRegisteredScheme, trustedVerifierJSON: verifiers, shouldValidateClient: false)
         try? await openID4VP.constructVerifiablePresentationToken(credentialsMap: credentialsMap)
         let errorMessage = "Network Request failed with error response: response"
         mockNetworkManager.setMockResponse(for: URL(string: "https://example.com")!, error: NetworkRequestException.networkRequestFailed(message: errorMessage))

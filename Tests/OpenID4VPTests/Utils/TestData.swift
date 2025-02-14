@@ -12,11 +12,81 @@ let testVerifierList:  [[String: Any]]  = [
             "https://injiverify.qa-inji.mosip.net/redirect",
             "https://injiverify.dev1.mosip.net/redirect"
         ]
+    ],
+    [
+        "client_id": "https://mock-verifier.com",
+        "response_uris": [
+            "https://mock-verifier.com/response",
+        ]
+    ]
+]
+
+let presentationDefinition: [String: Any] = [
+    "id": "vp_presentation_definition",
+    "input_descriptors": [
+        [
+            "id": "input_1",
+            "name": "Verifiable Credential",
+            "purpose": "To verify identity using Linked Data Proofs",
+            "format": [
+                "ldp_vc": [
+                    "proof_type": ["Ed25519Signature2018", "RsaSignature2018"]
+                ]
+            ],
+            "constraints": [
+                "fields": [
+                    [
+                        "path": ["$.credentialSubject.email"],
+                        "filter": [
+                            "type": "string",
+                            "pattern": "@gmail.com"
+                        ]
+                    ]
+                ]
+            ]
+        ]
+    ]
+]
+
+let clientMetadata: [String: Any] = [
+    "client_name": "Requester name",
+    "logo_uri": "https://mock-verifier.com/logo",
+    "authorization_encrypted_response_alg": "ECDH-ES",
+    "authorization_encrypted_response_enc": "A256GCM",
+    "vp_formats": [
+        "mso_mdoc": [
+            "alg": [
+                "ES256",
+                "EdDSA"
+            ]
+        ],
+        "ldp_vp": [
+            "proof_type": [
+                "Ed25519Signature2018",
+                "Ed25519Signature2020",
+                "RsaSignature2018"
+            ]
+        ]
     ]
 ]
 
 // base64 -> client_id_scheme = redirect_uri
-let testValidBase64EncodedVpRequestWithRedirectUri = "OPENID4VP://authorize?Y2xpZW50X2lkPWh0dHBzOi8vaW5qaXZlcmlmeS5kZXYyLm1vc2lwLm5ldCZjbGllbnRfaWRfc2NoZW1lPXJlZGlyZWN0X3VyaSZyZWRpcmVjdF91cmk9aHR0cHM6Ly9pbmppdmVyaWZ5LmRldjIubW9zaXAubmV0JnByZXNlbnRhdGlvbl9kZWZpbml0aW9uPXsiaWQiOiIxMjMiLCJpbnB1dF9kZXNjcmlwdG9ycyI6W3siaWQiOiJiYW5raW5nX2lucHV0XzEiLCJmb3JtYXQiOiB7ImxkcF92YyI6IHsicHJvb2ZfdHlwZSI6IFsiRWQyNTUxOVNpZ25hdHVyZTIwMTgiXX19LCJuYW1lIjoiQmFuayBBY2NvdW50IEluZm9ybWF0aW9uIiwicHVycG9zZSI6ImhpaWlpIiwiY29uc3RyYWludHMiOnsiZmllbGRzIjpbeyJwYXRoIjpbIiQuY3JlZGUiXSwicHVycG9zZSI6IldlIGNhbiB1c2UgZm9yICAjIHZlcmlmaWNhdGlvbiBwdXJwb3NlICMgZm9yIGFueXRoaW5nIiwiZmlsdGVyIjp7InR5cGUiOiJzdHJpbmciLCJwYXR0ZXJuIjoiXlswLTldezl9fF4oW2EtekEtWl0pezR9KFthLXpBLVpdKXsyfShbMC05YS16QS1aXSl7Mn0oWzAtOWEtekEtWl17M30pPyQifX0seyJwYXRoIjpbIiQudmMuY3JlZGVudGlhbCIsIiQudmMuY3JlZGVudGlhbFN1YmplY3QuYWNjb3VudFsqXS5yb3V0ZSIsIiQuYWNjb3VudFsqXS5yb3V0ZSJdLCJwdXJwb3NlIjoiV2UgY2FuIHVzZSBmb3IgdmVyaWZpY2F0aW9uIHB1cnBvc2UiLCJmaWx0ZXIiOnsidHlwZSI6InN0cmluZyIsInBhdHRlcm4iOiJeWzAtOV17OX18XihbYS16QS1aXSl7NH0oW2EtekEtWl0pezJ9KFswLTlhLXpBLVpdKXsyfShbMC05YS16QS1aXXszfSk/JCJ9fV19fV19JnJlc3BvbnNlX3R5cGU9dnBfdG9rZW4mbm9uY2U9VmJSUkIvTFR4TGlYbVZOWnV5TU84QT09JnN0YXRlPSttUlFlMWQ2cEJvSnFGNkFiMjhrbGc9PSZjbGllbnRfbWV0YWRhdGE9eyJhdXRob3JpemF0aW9uX2VuY3J5cHRlZF9yZXNwb25zZV9hbGciOiJFQ0RILUVTIiwiYXV0aG9yaXphdGlvbl9lbmNyeXB0ZWRfcmVzcG9uc2VfZW5jIjoiQTI1NkdDTSIsInZwX2Zvcm1hdHMiOnsibXNvX21kb2MiOnsiYWxnIjpbIkVTMjU2IiwiRWREU0EiXX0sImxkcF92cCI6eyJwcm9vZl90eXBlIjpbIkVkMjU1MTlTaWduYXR1cmUyMDE4IiwiRWQyNTUxOVNpZ25hdHVyZTIwMjAiLCJSc2FTaWduYXR1cmUyMDE4Il19fX0="
+
+//TODO - check this  is valid or not -> https://openid.net/specs/openid-4-verifiable-presentations-1_0.html#name-response-mode-direct_post
+let authorizationRequestParamsWithRedirectUri: [String: Any] = [
+    "client_id": "redirect_uri:https://mock-verifier.com",
+    "redirect_uri":"https://mock-verifier.com",
+    "presentation_definition": presentationDefinition,
+    "response_type": "vp_token",
+    "response_mode": "direct_post",
+    "nonce":"VbRRB/LTxLiXmVNZuyMO8A==",
+    "state":"+mRQe1d6pBoJqF6Ab28klg==",
+    "client_metadata": clientMetadata
+]
+
+//let inValid = [...authorizationRequestParamsWithRedirectUri, overrirdesome: "..."]
+
+let encodedAuthorizationRequestInRedirectUriScheme = createEncodedAuthorizationRequest(requestParams: authorizationRequestParamsWithRedirectUri)
 
 // base64 -> client_id_scheme = redirect_uri, with response uri and response mode
 let testVpRequestWithRedirectUriAndResponseUriResponseMode = "OPENID4VP://authorize?Y2xpZW50X2lkPWh0dHBzOi8vaW5qaXZlcmlmeS5kZXYyLm1vc2lwLm5ldCZjbGllbnRfaWRfc2NoZW1lPXJlZGlyZWN0X3VyaSZyZXNwb25zZV91cmk9aHR0cHM6Ly9pbmppdmVyaWZ5LmRldjIubW9zaXAubmV0JnJlc3BvbnNlX21vZGU9ZGlyZWN0X3Bvc3QmcHJlc2VudGF0aW9uX2RlZmluaXRpb249eyJpZCI6IjEyMyIsImlucHV0X2Rlc2NyaXB0b3JzIjpbeyJpZCI6ImJhbmtpbmdfaW5wdXRfMSIsImZvcm1hdCI6IHsibGRwX3ZjIjogeyJwcm9vZl90eXBlIjogWyJFZDI1NTE5U2lnbmF0dXJlMjAxOCJdfX0sIm5hbWUiOiJCYW5rIEFjY291bnQgSW5mb3JtYXRpb24iLCJwdXJwb3NlIjoiaGlpaWkiLCJjb25zdHJhaW50cyI6eyJmaWVsZHMiOlt7InBhdGgiOlsiJC5jcmVkZSJdLCJwdXJwb3NlIjoiV2UgY2FuIHVzZSBmb3IgICMgdmVyaWZpY2F0aW9uIHB1cnBvc2UgIyBmb3IgYW55dGhpbmciLCJmaWx0ZXIiOnsidHlwZSI6InN0cmluZyIsInBhdHRlcm4iOiJeWzAtOV17OX18XihbYS16QS1aXSl7NH0oW2EtekEtWl0pezJ9KFswLTlhLXpBLVpdKXsyfShbMC05YS16QS1aXXszfSk/JCJ9fSx7InBhdGgiOlsiJC52Yy5jcmVkZW50aWFsIiwiJC52Yy5jcmVkZW50aWFsU3ViamVjdC5hY2NvdW50WypdLnJvdXRlIiwiJC5hY2NvdW50WypdLnJvdXRlIl0sInB1cnBvc2UiOiJXZSBjYW4gdXNlIGZvciB2ZXJpZmljYXRpb24gcHVycG9zZSIsImZpbHRlciI6eyJ0eXBlIjoic3RyaW5nIiwicGF0dGVybiI6Il5bMC05XXs5fXxeKFthLXpBLVpdKXs0fShbYS16QS1aXSl7Mn0oWzAtOWEtekEtWl0pezJ9KFswLTlhLXpBLVpdezN9KT8kIn19XX19XX0mcmVzcG9uc2VfdHlwZT12cF90b2tlbiZub25jZT1WYlJSQi9MVHhMaVhtVk5adXlNTzhBPT0mc3RhdGU9K21SUWUxZDZwQm9KcUY2QWIyOGtsZz09JmNsaWVudF9tZXRhZGF0YT17ImF1dGhvcml6YXRpb25fZW5jcnlwdGVkX3Jlc3BvbnNlX2FsZyI6IkVDREgtRVMiLCJhdXRob3JpemF0aW9uX2VuY3J5cHRlZF9yZXNwb25zZV9lbmMiOiJBMjU2R0NNIiwidnBfZm9ybWF0cyI6eyJtc29fbWRvYyI6eyJhbGciOlsiRVMyNTYiLCJFZERTQSJdfSwibGRwX3ZwIjp7InByb29mX3R5cGUiOlsiRWQyNTUxOVNpZ25hdHVyZTIwMTgiLCJFZDI1NTE5U2lnbmF0dXJlMjAyMCIsIlJzYVNpZ25hdHVyZTIwMTgiXX19fQ=="
@@ -25,6 +95,18 @@ let testVpRequestWithRedirectUriAndResponseUriResponseMode = "OPENID4VP://author
 let testVpRequestWithRedirectUriAndClientIdNotEqual = "OPENID4VP://authorize?Y2xpZW50X2lkPWh0dHBzOi8vaW5qaXZlcmlmeS5tb3NpcC5uZXQmY2xpZW50X2lkX3NjaGVtZT1yZWRpcmVjdF91cmkmcmVkaXJlY3RfdXJpPWh0dHBzOi8vaW5qaXZlcmlmeS5kZXYyLm1vc2lwLm5ldCZwcmVzZW50YXRpb25fZGVmaW5pdGlvbj17ImlkIjoiMTIzIiwiaW5wdXRfZGVzY3JpcHRvcnMiOlt7ImlkIjoiYmFua2luZ19pbnB1dF8xIiwiZm9ybWF0IjogeyJsZHBfdmMiOiB7InByb29mX3R5cGUiOiBbIkVkMjU1MTlTaWduYXR1cmUyMDE4Il19fSwibmFtZSI6IkJhbmsgQWNjb3VudCBJbmZvcm1hdGlvbiIsInB1cnBvc2UiOiJoaWlpaSIsImNvbnN0cmFpbnRzIjp7ImZpZWxkcyI6W3sicGF0aCI6WyIkLmNyZWRlIl0sInB1cnBvc2UiOiJXZSBjYW4gdXNlIGZvciAgIyB2ZXJpZmljYXRpb24gcHVycG9zZSAjIGZvciBhbnl0aGluZyIsImZpbHRlciI6eyJ0eXBlIjoic3RyaW5nIiwicGF0dGVybiI6Il5bMC05XXs5fXxeKFthLXpBLVpdKXs0fShbYS16QS1aXSl7Mn0oWzAtOWEtekEtWl0pezJ9KFswLTlhLXpBLVpdezN9KT8kIn19LHsicGF0aCI6WyIkLnZjLmNyZWRlbnRpYWwiLCIkLnZjLmNyZWRlbnRpYWxTdWJqZWN0LmFjY291bnRbKl0ucm91dGUiLCIkLmFjY291bnRbKl0ucm91dGUiXSwicHVycG9zZSI6IldlIGNhbiB1c2UgZm9yIHZlcmlmaWNhdGlvbiBwdXJwb3NlIiwiZmlsdGVyIjp7InR5cGUiOiJzdHJpbmciLCJwYXR0ZXJuIjoiXlswLTldezl9fF4oW2EtekEtWl0pezR9KFthLXpBLVpdKXsyfShbMC05YS16QS1aXSl7Mn0oWzAtOWEtekEtWl17M30pPyQifX1dfX1dfSZyZXNwb25zZV90eXBlPXZwX3Rva2VuJm5vbmNlPVZiUlJCL0xUeExpWG1WTlp1eU1POEE9PSZzdGF0ZT0rbVJRZTFkNnBCb0pxRjZBYjI4a2xnPT0mY2xpZW50X21ldGFkYXRhPXsiYXV0aG9yaXphdGlvbl9lbmNyeXB0ZWRfcmVzcG9uc2VfYWxnIjoiRUNESC1FUyIsImF1dGhvcml6YXRpb25fZW5jcnlwdGVkX3Jlc3BvbnNlX2VuYyI6IkEyNTZHQ00iLCJ2cF9mb3JtYXRzIjp7Im1zb19tZG9jIjp7ImFsZyI6WyJFUzI1NiIsIkVkRFNBIl19LCJsZHBfdnAiOnsicHJvb2ZfdHlwZSI6WyJFZDI1NTE5U2lnbmF0dXJlMjAxOCIsIkVkMjU1MTlTaWduYXR1cmUyMDIwIiwiUnNhU2lnbmF0dXJlMjAxOCJdfX19"
 
 // base64 -> client_id_scheme = pre-registered
+// As per OpenID4VP draft 23, pre-registered clients MUST NOT contain a : character in their Client Identifier.
+let authorizationRequestParamsForPreRegisteredScheme: [String: Any] = [
+    "client_id": "example-client",
+    "response_uri":"https://mock-verifier.com/response",
+    "presentation_definition": presentationDefinition,
+    "response_type": "vp_token",
+    "response_mode": "direct_post",
+    "nonce":"VbRRB/LTxLiXmVNZuyMO8A==",
+    "state":"+mRQe1d6pBoJqF6Ab28klg==",
+    "client_metadata": clientMetadata
+]
+let encodedAuthorizationRequestInPreRegisteredScheme = createEncodedAuthorizationRequest(requestParams: authorizationRequestParamsForPreRegisteredScheme)
 let testValidBase64EncodedVpRequestWithResponseUri = "OPENID4VP://authorize?Y2xpZW50X2lkPWh0dHBzOi8vaW5qaXZlcmlmeS5kZXYyLm1vc2lwLm5ldCZjbGllbnRfaWRfc2NoZW1lPXByZS1yZWdpc3RlcmVkJnByZXNlbnRhdGlvbl9kZWZpbml0aW9uPXsiaWQiOiIxMjMiLCJpbnB1dF9kZXNjcmlwdG9ycyI6W3siaWQiOiJiYW5raW5nX2lucHV0XzEiLCJmb3JtYXQiOiB7ImxkcF92YyI6IHsicHJvb2ZfdHlwZSI6IFsiRWQyNTUxOVNpZ25hdHVyZTIwMTgiXX19LCJuYW1lIjoiQmFuayBBY2NvdW50IEluZm9ybWF0aW9uIiwicHVycG9zZSI6ImhpaWlpIiwiY29uc3RyYWludHMiOnsiZmllbGRzIjpbeyJwYXRoIjpbIiQuY3JlZGUiXSwicHVycG9zZSI6IldlIGNhbiB1c2UgZm9yICAjIHZlcmlmaWNhdGlvbiBwdXJwb3NlICMgZm9yIGFueXRoaW5nIiwiZmlsdGVyIjp7InR5cGUiOiJzdHJpbmciLCJwYXR0ZXJuIjoiXlswLTldezl9fF4oW2EtekEtWl0pezR9KFthLXpBLVpdKXsyfShbMC05YS16QS1aXSl7Mn0oWzAtOWEtekEtWl17M30pPyQifX0seyJwYXRoIjpbIiQudmMuY3JlZGVudGlhbCIsIiQudmMuY3JlZGVudGlhbFN1YmplY3QuYWNjb3VudFsqXS5yb3V0ZSIsIiQuYWNjb3VudFsqXS5yb3V0ZSJdLCJwdXJwb3NlIjoiV2UgY2FuIHVzZSBmb3IgdmVyaWZpY2F0aW9uIHB1cnBvc2UiLCJmaWx0ZXIiOnsidHlwZSI6InN0cmluZyIsInBhdHRlcm4iOiJeWzAtOV17OX18XihbYS16QS1aXSl7NH0oW2EtekEtWl0pezJ9KFswLTlhLXpBLVpdKXsyfShbMC05YS16QS1aXXszfSk/JCJ9fV19fV19JnJlc3BvbnNlX3R5cGU9dnBfdG9rZW4mcmVzcG9uc2VfbW9kZT1kaXJlY3RfcG9zdCZub25jZT1WYlJSQi9MVHhMaVhtVk5adXlNTzhBPT0mc3RhdGU9K21SUWUxZDZwQm9KcUY2QWIyOGtsZz09JnJlc3BvbnNlX3VyaT1odHRwczovL2luaml2ZXJpZnkuZGV2Mi5tb3NpcC5uZXQvcmVkaXJlY3QmY2xpZW50X21ldGFkYXRhPXsiYXV0aG9yaXphdGlvbl9lbmNyeXB0ZWRfcmVzcG9uc2VfYWxnIjoiRUNESC1FUyIsImF1dGhvcml6YXRpb25fZW5jcnlwdGVkX3Jlc3BvbnNlX2VuYyI6IkEyNTZHQ00iLCJ2cF9mb3JtYXRzIjp7Im1zb19tZG9jIjp7ImFsZyI6WyJFUzI1NiIsIkVkRFNBIl19LCJsZHBfdnAiOnsicHJvb2ZfdHlwZSI6WyJFZDI1NTE5U2lnbmF0dXJlMjAxOCIsIkVkMjU1MTlTaWduYXR1cmUyMDIwIiwiUnNhU2lnbmF0dXJlMjAxOCJdfX19"
 
 // jwt -> client_id_scheme = did
@@ -32,6 +114,7 @@ let testValidSignedVpRequestWithDid = "openid4vp://authorize?Y2xpZW50X2lkPWRpZDp
 
 let testInValidSignedVpRequestWithDidAndClientIdDifferent = "openid4vp://authorize?Y2xpZW50X2lkPWRpZDp3ZWI6bW9zaXAuZ2l0aHViLmlvOmluamktbW9jay1zZXJ2aWNlczpvcGVuaWQ0dnAtc2VydmljZTpkb2NzJmNsaWVudF9pZF9zY2hlbWU9ZGlkJnJlcXVlc3RfdXJpPWh0dHBzOi8vN2FmOC0yNDAxLTQ5MDAtNzFjMi1mNzRhLThkODgtYWE1Yi0yZjE2LTI5NGIubmdyb2stZnJlZS5hcHAvdmVyaWZpZXIvZ2V0LWF1dGgtcmVxdWVzdC1vYmomcmVxdWVzdF91cmlfbWV0aG9kPWdldCBIVFRQLzEuMQ=="
 
+//let encodedAuthorizationRequestWithInvalidPresentationDefinitionInPreRegisteredScheme
 let testInvalidPresentationDefinitionVpRequest = "OPENID4VP://authorize?Y2xpZW50X2lkPWh0dHBzOi8vaW5qaXZlcmlmeS5kZXYyLm1vc2lwLm5ldCZjbGllbnRfaWRfc2NoZW1lPXByZS1yZWdpc3RlcmVkJnByZXNlbnRhdGlvbl9kZWZpbml0aW9uPXsiaW5wdXRfZGVzY3JpcHRvcnMiOltdfSZyZXNwb25zZV90eXBlPXZwX3Rva2VuJnJlc3BvbnNlX21vZGU9ZGlyZWN0X3Bvc3Qmbm9uY2U9VmJSUkIvTFR4TGlYbVZOWnV5TU84QT09JnN0YXRlPSttUlFlMWQ2cEJvSnFGNkFiMjhrbGc9PSZyZXNwb25zZV91cmk9aHR0cHM6Ly9pbmppdmVyaWZ5LmRldjIubW9zaXAubmV0L3JlZGlyZWN0"
 
 let invalidVpRequest = "OPENID4VP://authorize?Y2xpZW50X2lkPWh0dHBzOi8vaW5qaXZlcmlmeS5kZXYyLm1vc2lwLm5ldCZwcmVzZW50YXRpb25fZGVmaW5pdGlvbj17ImlucHV0X2Rlc2NyaXB0b3JzIjpbXX0mcmVzcG9uc2VfdHlwZT12cF90b2tlbiZyZXNwb25zZV9tb2RlPWRpcmVjdF9wb3N0Jm5vbmNlPVZiUlJCL0xUeExpWG1WTlp1eU1POEE9PSZzdGF0ZT0rbVJRZTFkNnBCb0pxRjZBYjI4a2xnPT0mcmVzcG9uc2VfdXJpPWh0dHBzOi8vaW5qaXZlcmlmeS5kZXYyLm1vc2lwLm5ldC9yZWRpcmVjdA=="

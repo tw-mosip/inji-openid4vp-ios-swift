@@ -99,13 +99,10 @@ class AuthorizationRequestUtilTests: XCTestCase {
     }
     
     func testExtractClientIdPartOnlyWithPreRegisteredClientId(){
-        let clientIdWithPreRegisteredSchemeWithSchemeMentioned = "pre-registered:example-client"
         let clientIdWithPreRegisteredSchemeWithoutSchemeMentioned = "example-client"
 
-        let result1 = extractClientIdPartOnly(clientIdWithPreRegisteredSchemeWithSchemeMentioned)
-        let result2 = extractClientIdPartOnly(clientIdWithPreRegisteredSchemeWithoutSchemeMentioned)
+        let result = extractClientIdPartOnly(clientIdWithPreRegisteredSchemeWithoutSchemeMentioned)
         
-        XCTAssertEqual(result1, "example-client")
-        XCTAssertEqual(result2, "example-client")
+        XCTAssertEqual(result, "example-client")
     }
 }
