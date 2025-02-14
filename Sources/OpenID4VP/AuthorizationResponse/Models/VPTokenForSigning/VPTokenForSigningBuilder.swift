@@ -12,10 +12,17 @@ import Foundation
 public class CredentialFormatSpecificSigningDataMapCreator {
     static func create(selectedCredentials: [String: [String: Array<Any>]]) throws -> [FormatType: CredentialFormatSpecificSigningData] {
         var signablePayloads: [FormatType: CredentialFormatSpecificSigningData] = [:]
-        var groupedVcs: [FormatType: Any] = [:]
+        var groupedVcs: [FormatType: Array<Any>] = [:]
+        /**
+         {id1: {
+f1: [...]
+         }, id2: {
+f1: [...]
+         }}
+         */
         
         // iterate selected credentials
-        for(inputDescriptorId, matchingVcs) in selectedCredentials {
+        for(_, matchingVcs) in selectedCredentials {
             do {
                 
                 for(format, matchingVcOfFormat) in matchingVcs {
@@ -31,7 +38,7 @@ public class CredentialFormatSpecificSigningDataMapCreator {
                     if(groupedVcs[formatType!] == nil){
                         groupedVcs[formatType!] = matchingVcOfFormat
                     } else {
-                        var existingData = groupedVcs[formatType!] as? Array<Any>
+                        var existingData = groupedVcs[formatType!]
                         existingData?.append(contentsOf: matchingVcOfFormat)
                         groupedVcs.updateValue(existingData!, forKey: formatType!)
                     }

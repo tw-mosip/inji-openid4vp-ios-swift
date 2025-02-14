@@ -250,7 +250,7 @@ class OpenID4VPTests: XCTestCase {
     // Construct and return VP token for signing
     func testShareVerifiablePresentation() async{
         let received: [String:String]?
-        
+
         do {
             received = try await openID4VP.constructVerifiablePresentationToken(credentialsMap: credentialsMap)
             XCTAssertTrue(((received?.keys.elementsEqual(["ldp_vc"])) != nil))
@@ -275,7 +275,9 @@ class OpenID4VPTests: XCTestCase {
 
     // NetworkManager Tests Failure
     func testSendVpFailure() async {
-
+        let verifiers = createVerifiers(from: testVerifierList)
+        try? await openID4VP.authenticateVerifier(encodedAuthorizationRequest: testValidBase64EncodedVpRequestWithResponseUri, trustedVerifierJSON: verifiers, shouldValidateClient: false)
+        try? await openID4VP.constructVerifiablePresentationToken(credentialsMap: credentialsMap)
         let errorMessage = "Network Request failed with error response: response"
         mockNetworkManager.setMockResponse(for: URL(string: "https://mock-verifier.com")!, error: NetworkRequestException.networkRequestFailed(message: errorMessage))
 

@@ -5,8 +5,8 @@ public class AuthorizationResponseHandler {
     var vpToken: VPTokenType?
     private var vpTokensForSigning: [FormatType: CredentialFormatSpecificSigningData] = [:]
     //Format -> PathIndex is used to follow same ordering during VPToken creation
-    private    var path: [FormatType: (index: Int, nestedIndex: Int)] = [:]
-    private    var authorizationRequest: AuthorizationRequest?
+    private var path: [FormatType: (index: Int, nestedIndex: Int)] = [:]
+    private var authorizationRequest: AuthorizationRequest?
     
     public init(networkManager: NetworkManaging? = nil) {
         self.networkManager = networkManager ?? NetworkManager.shared
@@ -30,6 +30,7 @@ public class AuthorizationResponseHandler {
     }
     
     public func sendAuthorizationResponseToVerifier(authorizationResponse: AuthorizationResponse, authorizationRequest: AuthorizationRequest) async throws -> String?  {
+        print("auth request \(authorizationRequest)")
         switch authorizationRequest.responseMode {
         case ResponseMode.direct_post.rawValue:
             do {
@@ -59,6 +60,7 @@ public class AuthorizationResponseHandler {
                 throw Logger.handleException(exceptionType: "AuthorizationResponseSendingFailed",message: "Unable to send authorization response to the provided response_uri via direct_post with error \(error)", className: AuthorizationResponse.className)
             }
         default:
+            // In case of response_mode not available in authorization request, default mode is fragment
             throw AuthorizationResponseException.unsupportedResponseMode
         }
     }

@@ -21,6 +21,8 @@ func extractQueryParams(from queryItems: [URLQueryItem]) throws -> [String: Stri
     for queryItem in queryItems {
         extractedValues[queryItem.name] = queryItem.value
     }
+    print("extracted values \(extractedValues)")
+    print("extracted values \(queryItems)")
     return extractedValues
 }
 
@@ -28,6 +30,7 @@ func parseAndValidatePresentationDefinitionInAuthorizationRequest(
     params: [String: Any],
     networkManager: NetworkManaging
 ) async throws -> [String: Any] {
+    print("PD keys = \(params.keys)")
     
     let hasPresentationDefinition = params.keys.contains("presentation_definition")
     let hasPresentationDefinitionUri = params.keys.contains("presentation_definition_uri")
@@ -228,7 +231,8 @@ func validateVerifier(verifierList: [Verifier], params: [String: Any],shouldVali
         }
         
         if params["redirect_uri"] != nil {
-            guard getStringValue(params["redirect_uri"] ?? "") == clientId else {
+            let originalClientId = extractClientIdPartOnly(clientId!)
+            guard getStringValue(params["redirect_uri"] ?? "") == originalClientId else {
                 throw Logger.handleException(exceptionType: "InvalidVerifierRedirectUri", className: AuthorizationRequest.className)
             }
         }
