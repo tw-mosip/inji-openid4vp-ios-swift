@@ -2,7 +2,7 @@ struct DescriptorMap: Encodable{
     let id: String
     let format: FormatType
     let path: String
-    let path_nested: String?
+    let path_nested: String
 }
 
 struct PresentationSubmission: Encodable{

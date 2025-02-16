@@ -2,7 +2,6 @@ import Foundation
 import JSONWebSignature
 import CryptoKit
 
-//TODO: Separate data representation and validation + object creation logic
 public struct AuthorizationRequest: Encodable {
     let clientId: String
     let clientIdScheme: String
@@ -16,10 +15,10 @@ public struct AuthorizationRequest: Encodable {
     var clientMetadata: Any?
     static let className = String(describing: AuthorizationRequest.self)
     static var authorizationRequest: AuthorizationRequest?
-    // The presentation would contain the full verifier_attestation:example-client string as the audience (intended receiver) and the same full string would be used as the Client Identifier anywhere in the OAuth flow.
-    //TODO: add client_id_scheme
+
     enum CodingKeys: String, CodingKey {
         case client_id
+        case client_id_scheme
         case presentation_definition
         case response_type
         case response_mode
@@ -28,19 +27,18 @@ public struct AuthorizationRequest: Encodable {
         case redirect_uri
         case response_uri
         case client_metadata
-        case client_id_scheme
     }
     
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(clientId, forKey: .client_id)
+        try container.encode(clientIdScheme, forKey: .client_id_scheme)
         if let presentationDefString = presentationDefinition as? String {
             try container.encode(presentationDefString, forKey: .presentation_definition)
         } else if let presentationDefObject = presentationDefinition as? PresentationDefinition {
             try container.encode(presentationDefObject, forKey: .presentation_definition)
         }
         try container.encode(responseType, forKey: .response_type)
-        try container.encode(clientIdScheme, forKey: .client_id_scheme)
         try container.encode(responseMode, forKey: .response_mode)
         try container.encode(nonce, forKey: .nonce)
         try container.encode(state, forKey: .state)
@@ -178,8 +176,6 @@ public struct AuthorizationRequest: Encodable {
     private static func createAuthorizationRequest(from params: [String: Any]) -> AuthorizationRequest {
         let clientId =  getStringValue(params["client_id"])!
         let clientIdScheme = (try? extractClientIdScheme(clientId: clientId))!
-        //Let consumer use extractClientIdPartOnly  only when required - for display in UI
-        let extractedClientIdWithoutClientIdSchemePrefix = extractClientIdPartOnly(clientId)
         return AuthorizationRequest(
             clientId: clientId,
             clientIdScheme: clientIdScheme,

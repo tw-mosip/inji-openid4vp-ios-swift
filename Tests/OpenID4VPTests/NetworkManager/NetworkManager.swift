@@ -12,7 +12,6 @@ class MockNetworkManager: NetworkManaging {
     func sendHTTPRequest(url: URL, method: HTTP_METHOD, bodyParams: String?, headers: [String: String]?) async throws -> String? {
         calledUrls.append(url.absoluteString)
         if let (response, error) = mockResponses[url] {
-            print("matched")
             if let error = error {
                 throw error
             }

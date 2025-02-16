@@ -1,10 +1,3 @@
-//
-//  File.swift
-//  
-//
-//  Created by Kiruthika Jeyashankar on 07/02/25.
-//
-
 import Foundation
 
 class LdpVpTokenBuilder : VpTokenBuilder {
@@ -20,7 +13,6 @@ class LdpVpTokenBuilder : VpTokenBuilder {
 
     func build() throws -> CredentialFormatSpecificVPToken {
         do{
-            //TODO: Can it be moved to setter logic?
             try ldpVPResponseMetadata.validate()
             let proof = Proof.constructProof(from: ldpVPResponseMetadata, challenge: self.nonce)
             return LdpVpToken(

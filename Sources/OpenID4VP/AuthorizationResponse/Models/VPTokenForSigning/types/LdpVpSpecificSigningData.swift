@@ -1,10 +1,3 @@
-//
-//  File.swift
-//  
-//
-//  Created by Kiruthika Jeyashankar on 04/02/25.
-//
-
 import Foundation
 
 struct LdpVpSpecificSigningData : CredentialFormatSpecificSigningData, Encodable {
@@ -29,10 +22,5 @@ struct LdpVpSpecificSigningData : CredentialFormatSpecificSigningData, Encodable
         try container.encode(verifiableCredential, forKey: .verifiableCredential)
         try container.encode(id, forKey: .id)
         try container.encode(holder, forKey: .holder)
-    }
-
-
-    static func create(credentialsArray: Array<String>) -> any CredentialFormatSpecificSigningData {
-        return LdpVpSpecificSigningData(verifiableCredential: credentialsArray, holder: "")
     }
 }

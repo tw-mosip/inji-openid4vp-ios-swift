@@ -1,10 +1,3 @@
-//
-//  File.swift
-//  
-//
-//  Created by Kiruthika Jeyashankar on 07/02/25.
-//
-
 import Foundation
 
 public struct AuthorizationResponse {
@@ -17,16 +10,11 @@ public struct AuthorizationResponse {
         self.presentation_submission = presentation_submission
     }
 
-    //Add state field
     func encodedItems() throws -> [(name: String, value: String)] {
-        //TODO: This has so much of Hard coding Can it be removed?
         let encodedVPTokenData: String, encodedPresentationSubmissionData: String
-        do {
-            encodedVPTokenData = try String(data: vpToken.encoded!, encoding: .utf8) ?? ""
-        } catch let error {
-            throw Logger.handleException(exceptionType: "JsonEncodingFailed", message: error.localizedDescription, fieldPath: ["vp_token"], className: AuthorizationResponse.className)
-        }
-
+        
+        encodedVPTokenData =  String(data: vpToken.encoded!, encoding: .utf8) ?? ""
+        
         do {
             encodedPresentationSubmissionData = try encodeToJsonString(self.presentation_submission)!
         } catch let error {
@@ -40,11 +28,6 @@ public struct AuthorizationResponse {
     }
 }
 
-//2 vcs -> mdoc, ldpvc -> 2 VP -> [vp_ldp_vp, mdoc_vp]
-//2 vcs -> ldp_vcs -> 1 VP -> vp_ldp_vp
-/**
- vp_token: "{.....all fields - context}"
- */
 enum VPTokenType{
     case vpTokenArray([CredentialFormatSpecificVPToken])
     case vpToken(CredentialFormatSpecificVPToken)
@@ -64,10 +47,10 @@ extension VPTokenType {
         case .vpTokenArray(let tokens):
             return try? encoder.encode(tokens.map{
                 try encoder.encode($0)
-            }) // Encodes the array directly
+            })
 
         case .vpToken(let token):
-            return try? encoder.encode(token) // Encodes the single token
+            return try? encoder.encode(token)
         }
     }
 }

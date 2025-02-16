@@ -16,10 +16,6 @@ class AuthorizationResponseHandlerTests: XCTestCase {
         clientMetadata: "clientMetaData" as String
     )
     let vpResponseMetaData = [FormatType.ldp_vc:LdpVPResponseMetadata(jws: "wemcn3234ns", signatureAlgorithm: "RsaSignature2018", publicKey: "-----BEGIN PUBLIC KEY-----\\nMIIBIjANBggvSPv73S\\nG5ToTt07NZPdKDrg9lSjetZup39oj12u0YoyRMlMhY0xYL6c8X1BexM7Wlp+c13o\\n1QIDAQAB\\n-----END PUBLIC KEY-----\\n", domain: "https://example")]
-    let credentialsMap: [String: [String: Array<Any>]] = [
-        "bank_input":
-            ["ldp_vc": ["VC1"]],
-    ]
     let vpTokensForSigning = [FormatType.ldp_vc: LdpVpSpecificSigningData(verifiableCredential: ["VC1"], holder: "wallet/app")]
     let mockNetworkManager = MockNetworkManager()
     let successAuthorizationResponse = AuthorizationResponse(vpToken: VPTokenType.vpToken( LdpVpToken(context: ["context"], type: ["VerifiableCredential"], verifiableCredential: ["VC1"], id: "id", holder: "holder", proof: Proof(type: "jwt", created: "currentTime", challenge: "verifier_nonce", domain: "verifier_domain", jws: "jws", proofPurpose: ProofPurpose.vpProofPurpose, verificationMethod: "public-key-resolving"))), presentation_submission: PresentationSubmission(

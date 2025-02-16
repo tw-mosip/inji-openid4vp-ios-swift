@@ -51,7 +51,7 @@ f1: [...]
         //group all formats ones together, call specfic creator and pass the grouped credentials
         for(credentialFormat, credentialsArray) in groupedVcs {
             if(credentialFormat == FormatType.ldp_vc){
-                signablePayloads[credentialFormat] = LdpVpSpecificSigningData.create(credentialsArray: credentialsArray as! Array<String>)
+                signablePayloads[credentialFormat] = LdpVpSpecificSigningData(verifiableCredential: credentialsArray as! Array<String>, holder: "")
             } else {
                 throw AuthorizationResponseException.unsupportedFormatOfLibrary
             }
