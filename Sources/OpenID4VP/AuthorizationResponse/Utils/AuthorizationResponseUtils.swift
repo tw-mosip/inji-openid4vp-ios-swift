@@ -25,11 +25,7 @@ func encodeVPTokenForSigning(_ vpTokensForSigning: [FormatType: CredentialFormat
         let encodedContent = try encoder.encode(value)
         formatted[key.rawValue] = String(data: encodedContent, encoding: .utf8)
     }
-    
-//    let encoder1 = JSONEncoder()
-//    let jsonData = try encoder1.encode(formatted)
-//    let jsonresponse: String? = String(data: jsonData, encoding: .utf8)
-//    let jsonresponse: String? = String(data: jsonData, encoding: .utf8)
+
     return formatted
     
 }

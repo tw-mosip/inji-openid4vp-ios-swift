@@ -21,17 +21,13 @@ func extractQueryParams(from queryItems: [URLQueryItem]) throws -> [String: Stri
     for queryItem in queryItems {
         extractedValues[queryItem.name] = queryItem.value
     }
-    print("extracted values \(extractedValues)")
-    print("extracted values \(queryItems)")
     return extractedValues
 }
 
 func parseAndValidatePresentationDefinitionInAuthorizationRequest(
     params: [String: Any],
     networkManager: NetworkManaging
-) async throws -> [String: Any] {
-    print("PD keys = \(params.keys)")
-    
+) async throws -> [String: Any] {    
     let hasPresentationDefinition = params.keys.contains("presentation_definition")
     let hasPresentationDefinitionUri = params.keys.contains("presentation_definition_uri")
     

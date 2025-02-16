@@ -19,14 +19,10 @@ public struct AuthorizationResponse {
 
     //Add state field
     func encodedItems() throws -> [(name: String, value: String)] {
-        //TODO: This has so much of Hard coding Can it be removed?
         let encodedVPTokenData: String, encodedPresentationSubmissionData: String
-        do {
-            encodedVPTokenData = try String(data: vpToken.encoded!, encoding: .utf8) ?? ""
-        } catch let error {
-            throw Logger.handleException(exceptionType: "JsonEncodingFailed", message: error.localizedDescription, fieldPath: ["vp_token"], className: AuthorizationResponse.className)
-        }
-
+        
+        encodedVPTokenData =  String(data: vpToken.encoded!, encoding: .utf8) ?? ""
+        
         do {
             encodedPresentationSubmissionData = try encodeToJsonString(self.presentation_submission)!
         } catch let error {

@@ -2,7 +2,6 @@ import Foundation
 import JSONWebSignature
 import CryptoKit
 
-//TODO: Separate data representation and validation + object creation logic
 public struct AuthorizationRequest: Encodable {
     let clientId: String
     let clientIdScheme: String
@@ -16,8 +15,7 @@ public struct AuthorizationRequest: Encodable {
     var clientMetadata: Any?
     static let className = String(describing: AuthorizationRequest.self)
     static var authorizationRequest: AuthorizationRequest?
-    // The presentation would contain the full verifier_attestation:example-client string as the audience (intended receiver) and the same full string would be used as the Client Identifier anywhere in the OAuth flow.
-    //TODO: add client_id_scheme
+
     enum CodingKeys: String, CodingKey {
         case client_id
         case presentation_definition

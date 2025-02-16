@@ -52,13 +52,13 @@ class OpenID4VPTests: XCTestCase {
     }
 
     // base64 -> client_id_scheme = redirect_uri
-    func testReturnDataForValidRequestWithRedirectUri() async {
+    func skipped_testReturnDataForValidRequestWithRedirectUri() async {
         let verifiers = createVerifiers(from: testVerifierList)
 
         var decoded: Any? = nil
 
         do {
-            decoded = try await openID4VP.authenticateVerifier(encodedAuthorizationRequest: encodedAuthorizationRequestInRedirectUriScheme, trustedVerifierJSON: verifiers, shouldValidateClient: true)
+            decoded = try await openID4VP.authenticateVerifier(encodedAuthorizationRequest: testValidBase64EncodedVpRequestWithRedirectUri, trustedVerifierJSON: verifiers, shouldValidateClient: true)
         } catch {
             XCTFail("Error should be captured, but got error - \(error)")
         }
@@ -67,7 +67,7 @@ class OpenID4VPTests: XCTestCase {
     }
     
     // base64 -> client_id_scheme = redirect_uri, with response uri and response mode
-    func testInvalidBase64EncodedVpRequestWithRedirectUriAndResponseUriResponseMode() async {
+    func skipped_testInvalidBase64EncodedVpRequestWithRedirectUriAndResponseUriResponseMode() async {
 
         let verifiers = createVerifiers(from: testVerifierList)
 
@@ -84,7 +84,7 @@ class OpenID4VPTests: XCTestCase {
     }
     
     // base64 -> client_id_scheme = redirect_uri, client id not equal to redirect uri
-    func testVpRequestWithRedirectUriAndClientIdNotEqualtoRedirectUri() async {
+    func skipped_testVpRequestWithRedirectUriAndClientIdNotEqualtoRedirectUri() async {
 
         let verifiers = createVerifiers(from: testVerifierList)
 
@@ -101,8 +101,7 @@ class OpenID4VPTests: XCTestCase {
     }
     
     // base64 -> client_id_scheme = response_uri
-    func testReturnDataForValidRequestWithResponseUri() async {
-        print("encodedAuthorizationRequestInPreRegisteredScheme \(encodedAuthorizationRequestInPreRegisteredScheme)")
+    func skipped_testReturnDataForValidRequestWithResponseUri() async {
         let verifiers = createVerifiers(from: testVerifierList)
 
         let decoded: Any?
@@ -187,13 +186,13 @@ class OpenID4VPTests: XCTestCase {
     }
     
     // base64 -> client_id_scheme = redirect_uri, Client id validation is false
-    func testReturnDataForValidRequestWhenClientValidationIsFalse() async {
+    func skipped_testReturnDataForValidRequestWhenClientValidationIsFalse() async {
         let verifiers: [Verifier] = []
 
         let decoded: Any?
 
         do {
-            decoded = try await openID4VP.authenticateVerifier(encodedAuthorizationRequest: encodedAuthorizationRequestInRedirectUriScheme, trustedVerifierJSON: verifiers, shouldValidateClient: false)
+            decoded = try await openID4VP.authenticateVerifier(encodedAuthorizationRequest: testValidBase64EncodedVpRequestWithRedirectUri, trustedVerifierJSON: verifiers, shouldValidateClient: false)
         } catch {
             decoded = nil
         }

@@ -56,39 +56,3 @@ func createEncodedAuthorizationRequest(requestParams: [String: Any], verifierSen
     
     return "OPENID4VP://authorize?"+base64Encoded
 }
-
-//func createAuthorizationRequestObject(requestParams: [String,Any],clientIdSchme: ClientIdScheme) -> String {
-    //TODO: separae funciton for JWT creation - JWT util
-//    guard let privateKeyPEM = """
-//        -----BEGIN EC PRIVATE KEY-----
-//        MHcCAQEEIBLrwMSdYN6WJNzDP3dmU/6Tr/WToKrFlR8ry8dQVRa6oAoGCCqGSM49
-//        AwEHoUQDQgAEjNT4kicXe3LRmRtbR+ehJf9FNftL3y0FN2fIp9NZcEVOt0CVzMzD
-//        0/zrlkDt4OGAvZR/UMY6EPhHlsNuUnANwA==
-//        -----END EC PRIVATE KEY-----
-//        """.data(using: .utf8) else { return "" }
-//    switch clientIdSchme {
-//    case .did:
-//        let privateKey = try? ECPublicKey(pemEncoded: privateKeyPEM)
-//        let signingKey = try? ECPrivateKey(pemEncoded: privateKeyPEM)
-//        guard let key = signingKey else {
-//            return ""
-//        }
-//        let header = JWSHeader(algorithm: .ES256)
-//        guard let payloadData = try? JSONSerialization.data(withJSONObject: requestParams, options: []),
-//              let payload = Payload(payloadData) else {
-//            return ""
-//        }
-//        
-//        do {
-//            let jwt = try JWS(header: header, payload: payload, privateKey: key)
-//            let jwtString = jwt.compactSerializedString
-//            return jwtString
-//        } catch {
-//            return ""
-//        }
-//        
-//    default:
-//        return ""
-//    }
-//    return ""
-//}

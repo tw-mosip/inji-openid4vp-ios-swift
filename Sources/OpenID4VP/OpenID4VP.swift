@@ -14,7 +14,6 @@ public class OpenID4VP {
         self.traceabilityId = traceabilityId
         self.networkManager = networkManager ?? NetworkManager.shared
         self.authorizationResponseHandler = AuthorizationResponseHandler(networkManager: networkManager)
-        print("auth handler set up successfully with network manager")
     }
 
     public func setResponseUri(_ responseUri: String) {
@@ -55,8 +54,7 @@ public class OpenID4VP {
                     formattedVPResponseMetadata[enumKey] = value
                 }
             }
-            print("authorizationResponseHandler \(String(describing: self.authorizationResponseHandler.debugDescription))")
-            print("auth request \(String(describing: self.authorizationRequest))")
+
             let authorizationResponse = try self.authorizationResponseHandler!.createAuthorizationReponse(authorizationRequest: self.authorizationRequest!, vpResponseMetadata: formattedVPResponseMetadata, vpTokensForSigning: self.vpTokensForSigning, credentialsMap: self.credentialsMap!)
             return try await self.authorizationResponseHandler!.sendAuthorizationResponseToVerifier(authorizationResponse: authorizationResponse, authorizationRequest: self.authorizationRequest!)
         } catch(let exception) {

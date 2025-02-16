@@ -30,7 +30,6 @@ public class AuthorizationResponseHandler {
     }
     
     public func sendAuthorizationResponseToVerifier(authorizationResponse: AuthorizationResponse, authorizationRequest: AuthorizationRequest) async throws -> String?  {
-        print("auth request \(authorizationRequest)")
         switch authorizationRequest.responseMode {
         case ResponseMode.direct_post.rawValue:
             do {
@@ -56,7 +55,6 @@ public class AuthorizationResponseHandler {
                 return try await networkManager.sendHTTPRequest(url: url, method: HTTP_METHOD.POST, bodyParams: requestBody ?? "", headers: ["Content-Type" : "application/x-www-form-urlencoded"])
             }
             catch {
-                print("error os Unable to send authorization response to the provided response_uri via direct_post with error \(error)")
                 throw Logger.handleException(exceptionType: "AuthorizationResponseSendingFailed",message: "Unable to send authorization response to the provided response_uri via direct_post with error \(error)", className: AuthorizationResponse.className)
             }
         default:
@@ -90,7 +88,6 @@ public class AuthorizationResponseHandler {
             self.vpToken =  VPTokenType.vpToken(vpTokenOfCredentials.first!)
         }
         else{
-            // TODO: format Format -> PathIndex, same ordering needs to be followed during VPToken creation
             self.vpToken = VPTokenType.vpTokenArray(vpTokenOfCredentials)
         }
         
@@ -105,13 +102,11 @@ public class AuthorizationResponseHandler {
     }
     
     private func createInputDescriptor(credentialsMap: [String: [String: Array<Any>]]) throws -> [DescriptorMap] {
-        //TODO: Handle for signle VP
         //In case of only single VP, presentation_submission -> path = $, path_nest = $.verifiableCredential[n]
         //and in case of multiple VPs, presentation_submission -> path = $[i], path_nest = $[i].verifiableCredential[n]
         var descriptorsMap: [DescriptorMap] = []
         let formatTypeMap : [String: FormatType] = ["ldp_vc": .ldp_vc]
         let isSingleVPSharing: Bool = path.keys.count == 1
-        print("isSingleVPSharing \(isSingleVPSharing)")
         
         for(inputDescriptorId, matchingVcs) in credentialsMap {
             do {
