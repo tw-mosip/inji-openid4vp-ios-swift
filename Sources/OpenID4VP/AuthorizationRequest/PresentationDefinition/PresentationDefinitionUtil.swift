@@ -99,7 +99,7 @@ func parseAndValidatePresentationDefinition(
     }
     
     let responseMode = getStringValue(authorizationRequest[AuthorizationRequestFieldConstants.responseMode.rawValue])
-    try validateForCredentialFormat(finalPresentationDefinition, responseMode: responseMode)
+    //try validateForCredentialFormat(finalPresentationDefinition, responseMode: responseMode)
     
     var mutableParams = authorizationRequest
     mutableParams[AuthorizationRequestFieldConstants.presentationDefinition.rawValue] = finalPresentationDefinition
