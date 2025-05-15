@@ -43,7 +43,7 @@ extension VPTokenType {
                 return encodedToken
             }
         } catch {
-            return nil
+            return self
         }
     }
 }
