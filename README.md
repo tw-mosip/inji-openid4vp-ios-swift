@@ -233,6 +233,32 @@ let unsignedVPTokens: [FormatType: UnsignedVPToken] = try openID4VP.constructUns
 )
 ```
 
+/**
+Discussions
+** 
+1. wallet is taking the responsibility of parsing auth request and getting the verifiable credentials matching the same, any idea on if any fucntionalities can be exposed from library to make it easier for wallet ?
+2. state reg the usage of mdoc sna designing in readme explicitly
+3. Have explicit call out for each and every detail reg usage in consumer // add reference to inji-wallet as example
+4. shareVerifiablePresentation to state more reg result VPTokenSigningResult
+5. Have disscussion in wider dforums on API design / interface changes
+6. enhance content of sendErrorToVerifier to state reg when consumer calls this fn
+7. Keep en eye of interface changes for backward compatibility
+8. Conclude on Encrypting an Unsigned Response should we be signing or not signing the response
+9. wallet_metadata
+10. JWK -> use lib's DTO ditrecly rather u=than us implementing it
+11. Chwckout testing of library as per its customization supported
+12. AuthorizationResponseHandler -> walletNonce shoyld be unique per transaction but to init its gonna be smae due to this
+13. VP context hold's vP's model modify it
+14. Authenticatin of ldp_vcs where proof is not bound to credential holder value
+15. checkout on naming - docTypeToDeviceAuthenticationBytes // this is holding map // maintain consistency in naming
+16. checkout if library exist on mdoc vp token creation
+17. Base64 url encoding library
+18. Base64Decoder, Base64Encoder renmae to Base64UrlDecoder, Base64UrlEncoder // a;ign with intent
+19. Checkout on usage of libs to avoid maintainability issues
+20. documentation from intergartors perspective, code contributors perspective
+21. remove unused var - DID_RESOLVER
+22. holder being empty and not having holder identifier
+*/
 ###### Exceptions
 
 1. JsonEncodingFailed exception is thrown if there is any issue while serializing the vp_token without proof.
