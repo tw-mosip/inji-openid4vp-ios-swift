@@ -23,10 +23,16 @@ let package = Package(
             name: "OpenID4VP",
             dependencies: [
                 "jose-swift", "Alamofire", "SwiftCBOR"
+            ],
+            resources: [
+                .copy("Resources/canonicalizer.js"),
             ]),
         .testTarget(
             name: "OpenID4VPTests",
-            dependencies: ["OpenID4VP","jose-swift","Alamofire", "SwiftCBOR"]
+            dependencies: ["OpenID4VP","jose-swift","Alamofire", "SwiftCBOR"],
+            resources: [
+                .copy("Resources/canonicalizer.js"),
+            ]
         ),
     ]
 )

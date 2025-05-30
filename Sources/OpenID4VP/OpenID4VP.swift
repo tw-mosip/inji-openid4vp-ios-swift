@@ -26,6 +26,36 @@ public class OpenID4VP {
         Logger.setTraceabilityId(className:String(describing: type(of: self)), traceabilityId: traceabilityId)
 
         do {
+            
+            let input = [
+                [
+                    "https://w3id.org/security#proof": [
+                    [
+                      "@graph": [
+                        [
+                          "sec:jws": [
+                            [
+                              "@value": "mock-signature"
+                            ]
+                          ],
+                          "@type": [
+                            "https://w3id.org/security#RsaSignature2018"
+                          ]
+                        ]
+                      ]
+                    ]
+                  ]
+              ]
+                ]
+
+            if let canonicalizer = Canonicalizer() {
+                if let result = canonicalizer.canonicalize(json: input) {
+                    // Gives the expanded JSON-LD but not the canonical JSON-LD
+                    print("Canonical JSON: \(result)")
+                }
+            }
+            
+            
             self.authorizationRequest =  try await AuthorizationRequest.validateAndCreateAuthorizationRequest(
                                                                         urlEncodedAuthorizationRequest: urlEncodedAuthorizationRequest,
                                                                         trustedVerifierJSON: trustedVerifierJSON,
@@ -33,6 +63,8 @@ public class OpenID4VP {
                                                                         setResponseUri: setResponseUri,
                                                                         shouldValidateClient: shouldValidateClient,
                                                                         networkManager: networkManager as NetworkManaging)
+            
+            
             return authorizationRequest!
 
         } catch(let exception) {
