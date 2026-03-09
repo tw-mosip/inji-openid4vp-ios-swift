@@ -26,7 +26,8 @@ public class UnsignedLdpVPTokenBuilder: UnsignedVPTokenBuilder {
     }
     
     func build(credentialInputDescriptorMappings: inout [CredentialInputDescriptorMapping]) async throws -> (vpTokenSigningPayload: VPTokenSigningPayload?, unsignedVPToken: any UnsignedVPToken) {
-        var context: [String] = ["https://www.w3.org/2018/credentials/v1"]
+//        var context: [String] = ["https://www.w3.org/2018/credentials/v1"]
+        var context: [String] = ["https://www.w3.org/ns/credentials/v2"]
         if signatureSuite == SignatureAlgorithm.ed25519Signature2020.rawValue {
             context.append("https://w3id.org/security/suites/ed25519-2020/v1")
         } else if signatureSuite == SignatureAlgorithm.jsonWebSignature2020.rawValue {
