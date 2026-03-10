@@ -31,6 +31,7 @@ public class UnsignedLdpVPTokenBuilder: UnsignedVPTokenBuilder {
         if signatureSuite == SignatureAlgorithm.ed25519Signature2020.rawValue {
             context.append("https://w3id.org/security/suites/ed25519-2020/v1")
         } else if signatureSuite == SignatureAlgorithm.jsonWebSignature2020.rawValue {
+            context.append("https://w3id.org/security/data-integrity/v1")
             context.append("https://w3id.org/security/suites/jws-2020/v1")
         }
         
