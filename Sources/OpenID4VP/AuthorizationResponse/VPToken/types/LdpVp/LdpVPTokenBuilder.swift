@@ -17,8 +17,8 @@ class LdpVPTokenBuilder: VPTokenBuilder {
             throw InvalidData(message: "payload is not LdpVPToken", className: className)
         }
         var proof = unsignedLdpVPToken.proof
-        proof?.proofValue = ldpVPTokenSigningResult.proofValue
-        proof?.jws = ldpVPTokenSigningResult.proofValue
+        proof?.proofValue = ldpVPTokenSigningResult.jws ?? ldpVPTokenSigningResult.proofValue
+        proof?.jws = nil
         let ldpVPToken = LdpVPToken(
             context: unsignedLdpVPToken.context,
             type: unsignedLdpVPToken.type,
