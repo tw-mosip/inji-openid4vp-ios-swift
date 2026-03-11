@@ -18,7 +18,7 @@ class LdpVPTokenBuilder: VPTokenBuilder {
         }
         var proof = unsignedLdpVPToken.proof
         proof?.proofValue = ldpVPTokenSigningResult.proofValue
-        proof?.jws = ldpVPTokenSigningResult.jws
+        proof?.jws = ldpVPTokenSigningResult.proofValue
         let ldpVPToken = LdpVPToken(
             context: unsignedLdpVPToken.context,
             type: unsignedLdpVPToken.type,

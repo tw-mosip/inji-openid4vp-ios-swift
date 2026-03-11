@@ -28,12 +28,12 @@ public class UnsignedLdpVPTokenBuilder: UnsignedVPTokenBuilder {
     func build(credentialInputDescriptorMappings: inout [CredentialInputDescriptorMapping]) async throws -> (vpTokenSigningPayload: VPTokenSigningPayload?, unsignedVPToken: any UnsignedVPToken) {
 //        var context: [String] = ["https://www.w3.org/2018/credentials/v1"]
         var context: [String] = ["https://www.w3.org/ns/credentials/v2"]
-        if signatureSuite == SignatureAlgorithm.ed25519Signature2020.rawValue {
-            context.append("https://w3id.org/security/suites/ed25519-2020/v1")
-        } else if signatureSuite == SignatureAlgorithm.jsonWebSignature2020.rawValue {
-            context.append("https://w3id.org/security/data-integrity/v1")
+//        if signatureSuite == SignatureAlgorithm.ed25519Signature2020.rawValue {
+//            context.append("https://w3id.org/security/suites/ed25519-2020/v1")
+//        } else if signatureSuite == SignatureAlgorithm.jsonWebSignature2020.rawValue {
+            context.append("https://w3id.org/security/data-integrity/v2")
 //            context.append("https://w3id.org/security/suites/jws-2020/v1")
-        }
+//        }
         
         var verifiableCredentials: [AnyCodable] = []
         
@@ -47,11 +47,14 @@ public class UnsignedLdpVPTokenBuilder: UnsignedVPTokenBuilder {
         }
         
         let proof = Proof(
-            type: signatureSuite,
+            type: "DataIntegrityProof",
             created: nil,
             challenge: challenge,
             domain: holder,
-            verificationMethod: holder, proofValue: nil
+            proofPurpose: ProofPurpose.vpProofPurpose,
+            verificationMethod: holder,
+            proofValue: nil,
+            cryptosuite: "eddsa-rdfc-2022"
         )
         
         let vpTokenSigningPayload = LdpVPToken(

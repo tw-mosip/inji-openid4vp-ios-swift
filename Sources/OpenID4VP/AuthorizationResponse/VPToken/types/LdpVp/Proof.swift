@@ -9,6 +9,7 @@ struct Proof: Encodable {
     var proofPurpose: ProofPurpose? = nil
     var verificationMethod: String
     var proofValue: String? = nil
+    var cryptosuite: String? = nil
 
     @available(*, deprecated, message: "Use VPResponseMetadata to construct Proof")
     static func construct(
