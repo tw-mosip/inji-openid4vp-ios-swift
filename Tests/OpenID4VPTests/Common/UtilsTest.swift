@@ -34,16 +34,37 @@ class UtilsTest : XCTestCase {
             TestCase(input: "http://example.com/search?q=hello%20world#@fragment"),
             TestCase(input: "http://:8080"),
             TestCase(input: ""),
-            TestCase(input: "https://example.com/invalid|character")
+            TestCase(input: "https://example.com/invalid|character"),
+            // non-https scheme is rejected even with valid RFC 3986 structure
+            TestCase(input: "foo://example.com:8042/over/there?name=ferret#nose"),
+            // malformed percent-encoding (not followed by two hex digits)
+            TestCase(input: "https://example.com/file%/name"),
+            // whitespace is not allowed
+            TestCase(input: "https://example.com/space here"),
+            // trailing newline must not be accepted
+            TestCase(input: "https://example.com/path\n")
         ]
-        
+
         for testCase in testCases {
-            XCTAssertFalse(isValidUri(testCase.input))
+            XCTAssertFalse(isValidUri(testCase.input), "expected invalid: \(testCase.input)")
         }
     }
-    
+
     func testValidUrl(){
-        XCTAssertTrue(isValidUri("https://609e-122-178-244-112.ngrok-free.app/verifier/get-auth-request-obj/did?draft=version-1.0&response_mode=direct_post"))
+        let validUrls = [
+            "https://609e-122-178-244-112.ngrok-free.app/verifier/get-auth-request-obj/did?draft=version-1.0&response_mode=direct_post",
+            // RFC 3986 structure: port + multi-segment path + query + fragment
+            "https://example.com:8042/over/there?name=ferret#nose",
+            // percent-encoded octets in path and query
+            "https://example.com/a%20b?q=hello%20world",
+            // empty path segment
+            "https://example.com//empty/seg",
+            // '/', '?' and '@' allowed within query and fragment
+            "https://example.com/p?a=1/2&b=x?y#f/g?h"
+        ]
+        for url in validUrls {
+            XCTAssertTrue(isValidUri(url), "expected valid: \(url)")
+        }
     }
     
     /// Check if input is JWT tests
